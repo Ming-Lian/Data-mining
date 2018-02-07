@@ -374,4 +374,44 @@ R预先定义了一些字符集方便大家调用，如下表所示:
 
 <a name="practice-1-stable"><h3>实战1：[静态数据抓取范例]() [<sup>目录</sup>](#content)</h3></p>
 
+rvest包+SelectorGadget抓取链家杭州二手房数据 
+
+```
+#加载所需的包
+library("xml2")
+library("rvest")
+library("dplyr")
+library("stringr")
+
+#对爬取页数进行设定并创建数据框
+
+i<-1:100
+house_inf<-data.frame()
+
+#使用for循环进行批量数据爬取（发现url的规律，写for循环语句）
+for (i in 1:100){
+web<- read_html(str_c("http://hz.lianjia.com/ershoufang/pg",i),encoding="UTF-8")
+
+#用SelectorGadget定位节点信息并爬取房名
+house_name<-web%>%html_nodes(".houseInfo a")%>%html_text()
+#爬取二手房基本信息并消除空格
+house_basic_inf<-web%>%html_nodes(".houseInfo")%>%html_text()
+house_basic_inf<-str_replace_all(house_basic_inf," ","")
+
+#SelectorGadget定位节点信息爬取地址
+house_address<-web%>%html_nodes(".positionInfo a")%>%html_text()
+#SelectorGadget定位节点信息爬取总价
+house_totalprice<-web%>%html_nodes(".totalPrice")%>%html_text()
+#SelectorGadget定位节点信息爬取单价
+house_unitprice<-web%>%html_nodes(".unitPrice span")%>%html_text()
+
+#创建数据框存储以上信息
+house<-data_frame(house_name,house_basic_inf,house_address,house_totalprice,house_unitprice)
+ house_inf<-rbind(house_inf,house)
+}
+
+#将数据写入csv文档
+write.csv(house_inf,file="D:/Rdata/datasets/house_inf.csv")
+```
+
 <a name="practice-2-dynamic"><h3>实战2：[动态数据抓取范例](https://mp.weixin.qq.com/s/BbtfaX0sHmuk9gmlRiNJKw) [<sup>目录</sup>](#content)</h3></p>
