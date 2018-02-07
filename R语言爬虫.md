@@ -8,12 +8,15 @@
 	- [XPath表达式](#xpath)
 	- [SelectorGadget自动生成XPath表达式](#selectorgadget)
 - [基础知识3：HTTP协议](#base-http)
+	- [URL语法](#url)
 
 
 
 
 <h1 name="title">R语言爬虫</h1>
 <p align="right">整理自公众号<strong>数据科学家养成记</strong>系列文章《R语言爬虫系列》</p>
+
+<img src=/picture/Web-crawler.jpg></img>
 
 <a name="base-html"><h3>基础知识1：[HTML基础与R语言解析](https://mp.weixin.qq.com/s/cHQqKulrkBRREPOYF3bGxg) [<sup>目录</sup>](#content)</h3></a>
 
@@ -141,3 +144,19 @@ Vary:Accept-Encoding
 ```
 closing connection #0
 ```
+
+<h4 name="url>URL语法</h4>
+
+所谓URL，就是我们平常所说的网址，它的全称叫做统一资源定位符（Uniform Resource Locators）。
+
+总体的URL例子可以表示为：
+
+```
+scheme://hostname:port/path?querystring#fragment
+```
+
+> - scheme 表示URL的模式，它定义了浏览器和服务器之间通信所采用的协议，NBA主页的例子里采用的模式就是http
+> - hostname 主机名,提供了存放我们感兴趣资源的服务器的名字，它是一个服务器的唯一识别符
+> - port 端口号,一般默认为80
+> 
+> 主机名和端口号之后的路径用来确定被请求的资源在服务器上的位置，跟文件系统类似，也是用/符号来分段的。
