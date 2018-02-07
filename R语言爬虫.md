@@ -229,6 +229,7 @@ You are 39 years old.
 
 <a name="ajax"><h3>基础知识4：[AJAX与动态网页介绍](https://mp.weixin.qq.com/s/9SbbbP2PPMhRW-GgLe3kvg) [<sup>目录</sup>](#content)</h3></a>
 
+<p align="center"><img src=/picture/ajax.jpg width="500"></img></p>
 一个动态网页的例子：知乎首页是一个动态网站（DHTML），具体表现就是从首页不断下拉，网页内容在不断变化但url却一直都是https://www.zhihu.com/ ，或者是点击了某个地方内容也发生了变化但抬头一看地址栏，url依然没有变化。对于动态网页，再用静态网页的方法来抓取已经行不通了。
 
 网络技术实现从静态到动态转变的一个关键角色是汇总于AJAX这个术语下的一组技术，所谓AJAX，全称叫做异步JavaScript和XML（Asynchronous JavaScript and XML）,它是一组技术，不同的浏览器有自己的AJAX实现组件，有了AJAX技术之后，就不需要对整个网页进行刷新了，局部更新既不占用宽带又可以提高加载速度有没有。
