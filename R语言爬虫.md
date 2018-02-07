@@ -12,6 +12,8 @@
 	- [HTTP消息](#http-message)
 - [基础知识4：AJAX与动态网页介绍](#base-ajax)
 - [基础知识5：正则表达式与字符串处理函数](#base-regexp)
+	- [基础文本处理函数中正则表达式的应用](#regexp-base-function)
+	- [stringr包文本处理函数中的正则表达式的应用](#regexp-stringr-function)
 
 
 
