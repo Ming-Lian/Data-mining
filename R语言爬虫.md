@@ -1,7 +1,7 @@
 <a name="content">目录</a>
 
 [R语言爬虫](#title)
-- [基础知识1:HTML基础与R语言解析](#base-html)
+- [基础知识1：HTML基础与R语言解析](#base-html)
 	- [在R语言中解析HTML](#decode-html)
 - [基础知识2：XML&XPath表达式](#base-xml)
 	- [在R语言中解析XML](#decode-xml)
