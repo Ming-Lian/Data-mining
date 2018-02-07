@@ -9,6 +9,7 @@
 	- [SelectorGadget自动生成XPath表达式](#selectorgadget)
 - [基础知识3：HTTP协议](#base-http)
 	- [URL语法](#url)
+	- [HTTP消息](#http-message)
 
 
 
@@ -161,3 +162,66 @@ scheme://hostname:port/path?querystring#fragment
 > 
 > 主机名和端口号之后的路径用来确定被请求的资源在服务器上的位置，跟文件系统类似，也是用/符号来分段的。
 
+<h4 name="http-message">HTTP消息</h4>
+
+HTTP消息无论是请求模式还是响应模式，都由起始行（start line）、标头（headers）（也叫消息报头）和正文（body）三部分组成。
+
+> - **起始行（start line）** 每个HTTP消息的第一行，它定义了请求使用的方法，以及所请求资源的路径和浏览器能够处理的HTTP最高版本。
+> 
+> - **标头（headers）** 浏览器和服务器提供了元信息，以“名字-取值”形式表示的一套标头字段。
+>
+> - **正文（body）** 正文部分包含纯文本或者二进制数据，这由标头信息中的content-type声明决定。
+>
+> - **MIME（多用途互联网邮件扩展）类型声明** 这个声明的作用是告诉浏览器或服务器传输过来的是哪种类型的数据。
+
+在请求模式中，最常用的请求方法是**GET**和**POST**方法，在爬虫过程中至关重要。这两个方法都是从服务器请求一个资源，但是在正文的使用上有所不同，**GET方法不会在请求的正文中发送任何内容，但POST会用正文来发送数据**。
+
+GET请求如下：
+
+```
+GET/form.html HTTP/1.1(CRLF)
+```
+
+在R中，RCurl包提供了一些高级函数来执行GET请求从Web服务器上获取某个资源，最常用的函数的getURL()，这个函数会自动确定主机、端口以及请求的资源。
+
+```
+library(RCurl)
+getURL（http://nbachina.qq.com/a/20170914/004815.htm)
+```
+
+POST请求如下：
+
+```
+POST/greetings.html HTTP/1.1
+```
+在R中执行POST请求，无需手动构建，而是可以使用postForm()函数：
+
+```
+url<-“http://www.r-datacollection.com/materials/http/POSTexample.php”
+cat(postForm(url,name=“Kobe”,age=39,style=“post”))
+Hello Kobe!
+You are 39 years old.
+```
+
+常见的HTTP请求方法如下：
+
+| 方法 | 描述 |
+|:-----|:-----|
+|GET|从服务器检索资源|
+|POST|利用消息向服务器发送数据，然后从服务器检索资源|
+|HEAD|从服务器检索资源，但只响应起始行和标头|
+|PUT|将请求的正文保存在服务器上|
+|DELETE|从服务器删除一个资源|
+|TRACE|追踪消息到达服务器沿途的路径|
+|OPTIONS|返回支持的HTTP方法清单|
+|CONNECT|建立一个网络连接|
+
+常见的HTTP状态码如下所示：
+
+> 1xx：指示信息--表示请求已接收，继续处理
+> 2xx：成功--表示请求已被成功接收、理解、接受
+> 3xx：重定向--要完成请求必须进行更进一步的操作
+> 4xx：客户端错误--请求有语法错误或请求无法实现
+> 5xx：服务器端错误--服务器未能实现合法的请求
+
+常见的200表示成功找到资源，404表示未找到资源，500表示服务器内部错误，502表示错误网关等。
