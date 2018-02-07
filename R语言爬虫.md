@@ -451,3 +451,63 @@ headers <- c('Accept'='application/json',
              'cookie'=Cookie
 )
 ```
+
+二次请求实际的url：
+
+```
+url <- "https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?r=1507597918348&seq=0&skey=@crypt_ee7cd3e3_70091604da65a07600cfdca47b81cfaf"
+```
+
+GET方法单次执行请求：
+
+```
+wechat_friends <- GET(url,add_headers(.headers =headers))
+```
+
+<h4 name="netease-study">POST请求抓取网易云课堂数据</h4>
+
+虽说动态网站数据请求也有GET方法的，但POST方法才是动态网页的主要的请求方式。
+
+跟GET请求方法一样，切换到Header版块后继续关注General等3个子信息，但POST请求下我们需要注意的一点是：POST请求下没有像GET请求一样的Query String Parameters，而是由Request Payload来构造请求头表单参数，这一点和GET方法大不相同。总而言之，在动态网页的HTTP请求中，如果是GET请求，请求头表单参数以name=value&name1=value1的形式直接附在url后面，如果是POST请求，请求头表单参数以相同的形式放在构造的表单体中。
+
+网易云课堂的XHR数据包不好找，通过尝试和preview，可以发现课程信息都被封装在一个studycourse.json的文件中：
+
+<table>
+<tr>
+	<td><img src=/picture/netease-study1.png border=0></td>
+	<td><img src=/picture/netease-study2.png border=0></td>
+</tr>
+</table>
+
+所以对于网易云课堂的数据请求在R中构造如下：
+
+```
+#构造请求头
+#这里小编没有登录账号，cookie就不要了
+headers <- c('Accept'='application/json',
+             'Content-Type'='application/json',          
+             'User-Agent'='ozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.221 Safari/537.36 SE 2.X MetaSr 1.0',          
+             'edu-script-token'= '37aa682d1473455c8a77e6a4476e8f9e',
+             'Referer'='http://study.163.com/courses', 
+             'Connection'='keep-alive'
+)
+#POST请求需要构造请求头表单参数
+payload<-list(
+  'pageIndex'=1,
+  'pageSize'=50, 
+  'relativeOffset'=0,
+  'frontCategoryId'=-1
+)
+```
+
+二次请求实际的url：
+
+```
+url <- "http://study.163.com/p/search/studycourse.json"
+````
+
+POST方法单次执行请求：
+
+```
+netease <- POST(url,add_headers(.headers =headers),body =payload, encode="json")
+```
