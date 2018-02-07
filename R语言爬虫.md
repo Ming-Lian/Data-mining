@@ -36,11 +36,13 @@ exmaple1 <- htmlParse(file = url)
 
 <a name="base-xml"><h3>基础知识2：[XML&XPath表达式](https://mp.weixin.qq.com/s/yyEJM9eNVJ4B7fqMFCaJ-w) [<sup>目录</sup>](#content)</h3></a>
 
+<p align="center"><img src=/picture/xml.jpg width="600"></img></p>
+
 XML（eXtensible Markup Language）全称叫做可扩展标记语言，首先它和HTML一样，是一门标记语言，那它就该有标记语言的全部特征，这是XML的共性。XML当然必须也有自己的特性，XML是被设计用来传输和存储数据的，这和HTML用来显示数据大不一样，所以XML又有网络数据交换最流行格式的美誉。
 
 参考以下例子：
 
-<img src="/picture/xml.png"></img>
+<img src="/picture/xml-example.png"></img>
 
 XML的语法规则：
 - 一个XML文档永远以声明该文档的一行代码来开头：
