@@ -10,7 +10,8 @@
 - [基础知识3：HTTP协议](#base-http)
 	- [URL语法](#url)
 	- [HTTP消息](#http-message)
-- [基础知识4：AJAX与动态网页介绍](#ajax)
+- [基础知识4：AJAX与动态网页介绍](#base-ajax)
+- [基础知识5：正则表达式与字符串处理函数](#base-regexp)
 
 
 
@@ -231,7 +232,7 @@ You are 39 years old.
 
 常见的200表示成功找到资源，404表示未找到资源，500表示服务器内部错误，502表示错误网关等。
 
-<a name="ajax"><h3>基础知识4：[AJAX与动态网页介绍](https://mp.weixin.qq.com/s/9SbbbP2PPMhRW-GgLe3kvg) [<sup>目录</sup>](#content)</h3></a>
+<a name="base-ajax"><h3>基础知识4：[AJAX与动态网页介绍](https://mp.weixin.qq.com/s/9SbbbP2PPMhRW-GgLe3kvg) [<sup>目录</sup>](#content)</h3></a>
 
 <p align="center"><img src=/picture/ajax.jpg width="700"></img></p>
 
@@ -288,3 +289,79 @@ x5:0
 ```
 
 则可以根据规律，通过字符串的拼接即可构造准确的url资源请求，然后按照批量下载的方式利用RCurl包对其进行解析即可。
+
+<a name="base-regexp"><h3>基础知识5：[正则表达式与字符串处理函数](https://mp.weixin.qq.com/s/wA2uinKA59Fmt90UdSC69A)</h3></a>
+
+在R语言中，有两种风格的正则表达式可以实现，**一种**就是在基本的正则表达式基础上进行扩展，这和相应的R字符串处理函数相关，**另一种**就是Perl正则表达式，这种风格的正则我们在R中一般不常用。
+
+R默认的正则表达式风格包括**基础文本处理函数**和**stringr包**中的文本处理函数。在R中二者都支持正则表达式，也都具备基本的文本处理能力，但基础函数的一致性要弱很多，在函数命名和参数定义上很难让人印象深刻。stringr包是Hadley Wickham开发了一款专门进行文本处理的R包，它对基础的文本处理函数进行了扩展和整合，在一致性和易于理解性上都要优于基础函数。
+
+正则表达式语法参考：http://www.jb51.net/shouce/jquery1.82/regexp.html
+
+R中基础文本处理函数和stringr包文本处理函数对于正则表达式的支持情况如下表所示：
+
+![](/picture/regexp-function.png)
+
+<h4 name="regexp-base-function">基础文本处理函数中正则表达式的应用</h4>
+
+```
+example_text1 <- c("23333#RRR#PP","35555#CCCC","louwill#2017")
+#以#进行字符串切分
+unlist(strsplit(example_text1, "#")) 
+[1] "23333"   "RRR"     "PP"      "35555"   "CCCC"    "louwill" "2017" 
+#以空字符集进行字符串切分  
+unlist(strsplit(example_text1, "\\s"))
+[1] "23333#RRR#PP" "35555#CCCC"   "louwill#2017"
+#以空字符替换字符串第一个#匹配
+sub("#","", example_text1)
+[1] "23333RRR#PP" "35555CCCC"   "louwill2017"
+#以空字符集替换字符串全部#匹配
+gsub("#","",example_text1)
+[1] "23333RRRPP"  "35555CCCC"   "louwill2017"
+#查询字符串中是否存在3333或5555的特征并返回所在位置
+grep("[35]{4}", example_text1)
+[1] 1 2
+#查询字符串中是否存在3333或5555的特征并返回逻辑值
+grepl("[35]{4}", example_text1)
+[1]  TRUE  TRUE FALSE
+#返回匹配特征的字符串
+pattern <- "[[:alpha:]]*(,|#)[[:alpha:]]"
+m <- regexpr(pattern, example_text1)
+regmatches(example_text1, m)
+[1] "#R" "#C"
+```
+
+<h4 name="regexp-stringr-function">stringr包文本处理函数中的正则表达式的应用</h4>
+包内所有函数均以str_开头，后面单词用来说明该函数的含义，相较于基础文本处理函数，stringr包函数更容易直观地理解。
+
+```
+example_text2 <- "1. A small sentence. - 2. Another tiny sentence."
+library(stringr)
+#提取small特征字符
+str_extract(example_text2, "small")
+[1] "small"
+#提取包含sentence特征的全部字符串
+unlist(str_extract_all(example_text2, "sentence"))
+[1] "sentence" "sentence"
+#提取以1开始的字符串
+str_extract(example_text2, "^1")
+[1] "1"
+#提取以句号结尾的字符
+unlist(str_extract_all(example_text2, ".$"))
+[1] "."
+#提取包含tiny或者sentence特征的字符串
+unlist(str_extract_all(example_text2, "tiny|sentence"))
+[1] "sentence" "tiny"     "sentence"
+#点号进行模糊匹配
+str_extract(example_text2, "sm.ll")
+[1] "small"
+#中括号内表示可选字符串
+str_extract(example_text2, "sm[abc]ll")
+[1] "small"
+str_extract(example_text2, "sm[a-p]ll")
+[1] "small"
+```
+
+R预先定义了一些字符集方便大家调用，如下表所示:
+
+![](/picture/regexp-strsets.png)
