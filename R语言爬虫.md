@@ -34,7 +34,7 @@ exmaple1 <- htmlParse(file = url)
 XML（eXtensible Markup Language）全称叫做可扩展标记语言，首先它和HTML一样，是一门标记语言，那它就该有标记语言的全部特征，这是XML的共性。XML当然必须也有自己的特性，XML是被设计用来传输和存储数据的，这和HTML用来显示数据大不一样，所以XML又有网络数据交换最流行格式的美誉。
 
 参考以下例子：
-<img src="/xml.png"></img>
+<img src="/picture/xml.png"></img>
 
 XML的语法规则：
 - 一个XML文档永远以声明该文档的一行代码来开头：
