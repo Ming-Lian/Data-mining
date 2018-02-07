@@ -16,6 +16,8 @@
 	- [stringr包文本处理函数中的正则表达式的应用](#regexp-stringr-function)
 - [实战1：静态数据抓取范例](#practice-1-stable)
 - [实战2：动态数据抓取范例](#practice-2-dynamic)
+	- [GET请求抓取微信好友列表数据](#wechat-friendlist)
+	- [POST请求抓取网易云课堂数据](#netease-study)
 
 
 
@@ -415,3 +417,37 @@ write.csv(house_inf,file="D:/Rdata/datasets/house_inf.csv")
 ```
 
 <a name="practice-2-dynamic"><h3>实战2：[动态数据抓取范例](https://mp.weixin.qq.com/s/BbtfaX0sHmuk9gmlRiNJKw) [<sup>目录</sup>](#content)</h3></p>
+
+在DHTML中，经常出现的情景是，我明明在网页上看到这个数据了，但到后台HTML中却找不到了，这通常就是XHR在作祟。这时候我们就**不要看原始的HTML数据了，需要进行二次请求，通过web开发者工具找到真实请求的url**。下面就以两个网页为例，分别通过GET和POST请求拿到动态网页数据，全过程主要使用httr包来实现，httr包可谓是RCurl包的精简版，说其短小精悍也不为过。
+
+<h4 name="wechat-friendlist">GET请求抓取微信好友列表数据</h4>
+
+首先登录个人微信网页版，右键打开web开发者工具，下来一大堆请求：
+
+![](/picture/wechat-friendlist1.png)
+
+简单找一下发现网页中的微信好友列表信息并没有呈现在HTML 中，大概可以断定微信好友数据是通过动态加载来显示的，所以直接定位到XHR中，然而XHR列表中的资源太多，哪个里保存着我们需要的数据呢？一个办法是看数据包的大小，估计一下自己的目标数据的大小，缩小查找范围，然后再一一点开剩下的几个候选数据包，比如我们要找的数据包是微信朋友列表，肯定不会小于1kb,然后点开第一个XHR数据包，看**响应**标签里的数据：
+
+![](/picture/wechat-friendlist2.png)
+
+点开其中一个：
+
+![](/picture/wechat-friendlist3.png)
+
+我们要的朋友列表就是它了！
+
+找到真正的url之后，接下来就是获取请求信息了，切换到Headers版块，Header版块下的3个子信息我们都需要关注，它们是我们构造爬虫请求头的关键。
+
+![](/picture/wechat-friendlist4.png)
+
+找到相应的信息之后，我们便可以直接利用httr包在R中构建爬虫请求：
+
+```
+headers <- c('Accept'='application/json',
+             'Content-Type'='text/plain',          
+             'User-Agent'='Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.  36 (KHTML, like Gecko) Chrome/49.0.2623.221 Safari/537.36 SE 2.X Met aSr 1.0',          
+             'Referer'='https://wx.qq.com/', 
+             'Connection'='keep-alive',
+             'cookie'=Cookie
+)
+```
