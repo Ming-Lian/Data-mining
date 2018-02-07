@@ -14,6 +14,8 @@
 - [基础知识5：正则表达式与字符串处理函数](#base-regexp)
 	- [基础文本处理函数中正则表达式的应用](#regexp-base-function)
 	- [stringr包文本处理函数中的正则表达式的应用](#regexp-stringr-function)
+- [实战1：静态数据抓取范例](#practice-1-stable)
+- [实战2：动态数据抓取范例](#practice-2-dynamic)
 
 
 
@@ -369,3 +371,7 @@ str_extract(example_text2, "sm[a-p]ll")
 R预先定义了一些字符集方便大家调用，如下表所示:
 
 ![](/picture/regexp-strsets.png)
+
+<a name="practice-1-stable"><h3>实战1：[静态数据抓取范例]() [<sup>目录</sup>](#content)</h3></p>
+
+<a name="practice-2-dynamic"><h3>实战2：[动态数据抓取范例](https://mp.weixin.qq.com/s/BbtfaX0sHmuk9gmlRiNJKw) [<sup>目录</sup>](#content)</h3></p>
