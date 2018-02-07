@@ -145,7 +145,7 @@ Vary:Accept-Encoding
 closing connection #0
 ```
 
-<h4 name="url>URL语法</h4>
+<h4 name="url">URL语法</h4>
 
 所谓URL，就是我们平常所说的网址，它的全称叫做统一资源定位符（Uniform Resource Locators）。
 
@@ -160,3 +160,4 @@ scheme://hostname:port/path?querystring#fragment
 > - port 端口号,一般默认为80
 > 
 > 主机名和端口号之后的路径用来确定被请求的资源在服务器上的位置，跟文件系统类似，也是用/符号来分段的。
+
