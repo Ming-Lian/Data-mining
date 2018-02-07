@@ -270,3 +270,22 @@ XHR：DHTML中数据的获取机制是怎么样的？
 再看**参数**标签
 
 ![](/picture/WDT-tutorial4.png)
+
+可以看出url的构造规律：
+```
+https://mp.weixin.qq.com/mp/appmsgreport?action=page_time&uin=&key=&pass_ticket=&wxtoken=&devicetype=&clientversion=&appmsg_token=&x5=0&f=json
+
+action:page_time
+appmsg_token:	
+clientversion:	
+devicetype:
+f:json
+key:
+pass_ticket:
+uin:
+wxtoken:
+x5:0
+
+```
+
+则可以根据规律，通过字符串的拼接即可构造准确的url资源请求，然后按照批量下载的方式利用RCurl包对其进行解析即可。
