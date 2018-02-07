@@ -29,7 +29,7 @@ url <- "http://www.r-datacollection.com/materials/html/JavaScript.html"
 exmaple1 <- htmlParse(file = url)
 ```
 
-<h3 name="base-xml">基础知识2：[XML&XPath表达式](https://mp.weixin.qq.com/s/yyEJM9eNVJ4B7fqMFCaJ-w) [<sup>目录</sup>](#content)</h3>
+<a name="base-xml"><h3>基础知识2：[XML&XPath表达式](https://mp.weixin.qq.com/s/yyEJM9eNVJ4B7fqMFCaJ-w) [<sup>目录</sup>](#content)</h3></a>
 
 XML（eXtensible Markup Language）全称叫做可扩展标记语言，首先它和HTML一样，是一门标记语言，那它就该有标记语言的全部特征，这是XML的共性。XML当然必须也有自己的特性，XML是被设计用来传输和存储数据的，这和HTML用来显示数据大不一样，所以XML又有网络数据交换最流行格式的美誉。
 
@@ -93,7 +93,7 @@ XPath通过路径表达式（Path Expression）来选择节点信息，跟文件
 
 具体使用方法请点击阅读原文，或查看插件官方手册
 
-<h3 name="base-http">基础知识3：[HTTP协议](https://mp.weixin.qq.com/s/Z4TbCtBMNEY0RCNNiwv6aw) [<sup>目录</sup>](#content)</h3>
+<a name="base-http"><h3>基础知识3：[HTTP协议](https://mp.weixin.qq.com/s/Z4TbCtBMNEY0RCNNiwv6aw) [<sup>目录</sup>](#content)</h3></a>
 
 HTTP(HypterText Transfer Protocol)，即所谓超文本传输协议。HTTP就是浏览器或者爬虫工具如何来接收网页HTML的方法。
 
