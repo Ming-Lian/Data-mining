@@ -103,6 +103,8 @@ XPath通过路径表达式（Path Expression）来选择节点信息，跟文件
 
 <a name="base-http"><h3>基础知识3：[HTTP协议](https://mp.weixin.qq.com/s/Z4TbCtBMNEY0RCNNiwv6aw) [<sup>目录</sup>](#content)</h3></a>
 
+<p align="center"><img src=/picture/http.png width="600"></img></p>
+
 HTTP(HypterText Transfer Protocol)，即所谓超文本传输协议。HTTP就是浏览器或者爬虫工具如何来接收网页HTML的方法。
 
 例子：
