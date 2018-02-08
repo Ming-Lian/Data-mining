@@ -557,3 +557,16 @@ content(netease_study)
 	<td><img src=/picture/R-WebCrawler-pgkb-5.png border=0></td>
 </tr>
 </table>
+
+寻找对应的XHR对象
+
+<table>
+<tr>
+	<td><img src=/picture/R-WebCrawler-pgkb-6.png align="middle" border=0></td>
+	<td><img src=/picture/R-WebCrawler-pgkb-7.png align="middle" border=0></td>
+</tr>
+<tr>
+	<td><img src=/picture/R-WebCrawler-pgkb-8.png align="middle" border=0></td>
+	<td><img src=/picture/R-WebCrawler-pgkb-9.png align="middle" border=0></td>
+</tr>
+</table>
