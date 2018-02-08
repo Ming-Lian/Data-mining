@@ -1,7 +1,7 @@
 <a name="content">目录</a>
 
 [R语言爬虫](#title)
-- [基础知识1：HTML基础与R语言解析](#base-html)
+- [基础知识1:HTML基础与R语言解析](#base-html)
 	- [在R语言中解析HTML](#decode-html)
 - [基础知识2：XML&XPath表达式](#base-xml)
 	- [在R语言中解析XML](#decode-xml)
@@ -21,13 +21,12 @@
 
 
 
-
 <h1 name="title">R语言爬虫</h1>
 <p align="right">整理自公众号<strong>数据科学家养成记</strong>系列文章《R语言爬虫系列》</p>
 
-<p align="center"><img src=/picture/Web-crawler.jpg width="800"></img></p>
+![](/picture/R-WebCrawler-Web-crawler.jpg)
 
-<a name="base-html"><h3>基础知识1：[HTML基础与R语言解析](https://mp.weixin.qq.com/s/cHQqKulrkBRREPOYF3bGxg) [<sup>目录</sup>](#content)</h3></a>
+<h3 name="base-html">基础知识1：[HTML基础与R语言解析](https://mp.weixin.qq.com/s/cHQqKulrkBRREPOYF3bGxg) [<sup>目录</sup>](#content)</h3>
 
 点击链接查看具体内容
 
@@ -41,15 +40,15 @@ url <- "http://www.r-datacollection.com/materials/html/JavaScript.html"
 exmaple1 <- htmlParse(file = url)
 ```
 
-<a name="base-xml"><h3>基础知识2：[XML&XPath表达式](https://mp.weixin.qq.com/s/yyEJM9eNVJ4B7fqMFCaJ-w) [<sup>目录</sup>](#content)</h3></a>
+<h3 name="base-xml">基础知识2：[XML&XPath表达式](https://mp.weixin.qq.com/s/yyEJM9eNVJ4B7fqMFCaJ-w) [<sup>目录</sup>](#content)</h3>
 
-<p align="center"><img src=/picture/xml.jpg width="600"></img></p>
+<p align="center"><img src=/picture/R-WebCrawler-xml-logo.jpg width="600"></p>
 
 XML（eXtensible Markup Language）全称叫做可扩展标记语言，首先它和HTML一样，是一门标记语言，那它就该有标记语言的全部特征，这是XML的共性。XML当然必须也有自己的特性，XML是被设计用来传输和存储数据的，这和HTML用来显示数据大不一样，所以XML又有网络数据交换最流行格式的美誉。
 
 参考以下例子：
 
-<img src="/picture/xml-example.png"></img>
+![](/picture/R-Web-crawler-xml-example.png)
 
 XML的语法规则：
 - 一个XML文档永远以声明该文档的一行代码来开头：
@@ -108,9 +107,9 @@ XPath通过路径表达式（Path Expression）来选择节点信息，跟文件
 
 具体使用方法请点击阅读原文，或查看插件官方手册
 
-<a name="base-http"><h3>基础知识3：[HTTP协议](https://mp.weixin.qq.com/s/Z4TbCtBMNEY0RCNNiwv6aw) [<sup>目录</sup>](#content)</h3></a>
+<h3 name="base-http">基础知识3：[HTTP协议](https://mp.weixin.qq.com/s/Z4TbCtBMNEY0RCNNiwv6aw) [<sup>目录</sup>](#content)</h3>
 
-<p align="center"><img src=/picture/http.png width="600"></img></p>
+<p align="center"><img src=/picture/R-WebCrawler-http-logo.png width="600"></p>
 
 HTTP(HypterText Transfer Protocol)，即所谓超文本传输协议。HTTP就是浏览器或者爬虫工具如何来接收网页HTML的方法。
 
@@ -158,7 +157,7 @@ Vary:Accept-Encoding
 closing connection #0
 ```
 
-<h4 name="url">URL语法</h4>
+<h4 name="url>URL语法</h4>
 
 所谓URL，就是我们平常所说的网址，它的全称叫做统一资源定位符（Uniform Resource Locators）。
 
@@ -240,7 +239,7 @@ You are 39 years old.
 
 <a name="base-ajax"><h3>基础知识4：[AJAX与动态网页介绍](https://mp.weixin.qq.com/s/9SbbbP2PPMhRW-GgLe3kvg) [<sup>目录</sup>](#content)</h3></a>
 
-<p align="center"><img src=/picture/ajax.jpg width="700"></img></p>
+<p align="center"><img src=/picture/R-WebCrawler-ajax.jpg width="600"></p>
 
 一个动态网页的例子：知乎首页是一个动态网站（DHTML），具体表现就是从首页不断下拉，网页内容在不断变化但url却一直都是https://www.zhihu.com/ ，或者是点击了某个地方内容也发生了变化但抬头一看地址栏，url依然没有变化。对于动态网页，再用静态网页的方法来抓取已经行不通了。
 
@@ -264,19 +263,19 @@ XHR：DHTML中数据的获取机制是怎么样的？
 - 键盘按F12键进入web开发者工具
 - 在WDT（Web Development Tools）面板选择网络标签，点击该标签下的XHR子标签
 
-![](/picture/WDT-tutorial1.png)
+![](/picture/R-WebCrawler-WDT-tutorial1.png)
 
 - 按F5刷新网页，可以看到XHR资源列表，每个资源包含包括文件名、状态码和类型等信息
 
-![](/picture/WDT-tutorial2.png)
+![](/picture/R-WebCrawler-WDT-tutorial2.png)
 
 - 鼠标左键点击选中其中一个XHR资源，在工具右侧面板会显示该资源的具体信息，由7个标签构成，分别为：消息头、Cookie、参数等。其中**消息头**标签下的请求网址就是我们真实要请求的url
 
-![](/picture/WDT-tutorial3.png)
+![](/picture/R-WebCrawler-WDT-tutorial3.png)
 
 再看**参数**标签
 
-![](/picture/WDT-tutorial4.png)
+![](/picture/R-WebCrawler-WDT-tutorial4.png)
 
 可以看出url的构造规律：
 ```
@@ -292,13 +291,14 @@ pass_ticket:
 uin:
 wxtoken:
 x5:0
+
 ```
 
 则可以根据规律，通过字符串的拼接即可构造准确的url资源请求，然后按照批量下载的方式利用RCurl包对其进行解析即可。
 
 <a name="base-regexp"><h3>基础知识5：[正则表达式与字符串处理函数](https://mp.weixin.qq.com/s/wA2uinKA59Fmt90UdSC69A) [<sup>目录</sup>](#content)</h3></a>
 
-<p align="center"><img src=/picture/regexp.jpg width="600"></img></p>
+<p align="center"><img src=/picture/R-WebCrawler-regexp-logo.jpg width="600"></p>
 
 在R语言中，有两种风格的正则表达式可以实现，**一种**就是在基本的正则表达式基础上进行扩展，这和相应的R字符串处理函数相关，**另一种**就是Perl正则表达式，这种风格的正则我们在R中一般不常用。
 
@@ -308,7 +308,7 @@ R默认的正则表达式风格包括**基础文本处理函数**和**stringr包
 
 R中基础文本处理函数和stringr包文本处理函数对于正则表达式的支持情况如下表所示：
 
-![](/picture/regexp-function.png)
+![](/picture/R-WebCrawler-regexp-function.png)
 
 <h4 name="regexp-base-function">基础文本处理函数中正则表达式的应用</h4>
 
@@ -372,7 +372,7 @@ str_extract(example_text2, "sm[a-p]ll")
 
 R预先定义了一些字符集方便大家调用，如下表所示:
 
-![](/picture/regexp-strsets.png)
+![](/picture/R-WebCrawler-regexp-strsets.png)
 
 <a name="practice-1-stable"><h3>实战1：[静态数据抓取范例]() [<sup>目录</sup>](#content)</h3></p>
 
@@ -420,25 +420,27 @@ write.csv(house_inf,file="D:/Rdata/datasets/house_inf.csv")
 
 在DHTML中，经常出现的情景是，我明明在网页上看到这个数据了，但到后台HTML中却找不到了，这通常就是XHR在作祟。这时候我们就**不要看原始的HTML数据了，需要进行二次请求，通过web开发者工具找到真实请求的url**。下面就以两个网页为例，分别通过GET和POST请求拿到动态网页数据，全过程主要使用httr包来实现，httr包可谓是RCurl包的精简版，说其短小精悍也不为过。
 
+一般我们进行网页数据抓取是先看看网页源代码，看看我们要抓取的数据是否包含在源码中，如果是，则进行静态网页数据抓取，否则说明数据在XHR对象中，需要进行动态网页数据抓取。
+
 <h4 name="wechat-friendlist">GET请求抓取微信好友列表数据</h4>
 
 首先登录个人微信网页版，右键打开web开发者工具，下来一大堆请求：
 
-![](/picture/wechat-friendlist1.png)
+![](/picture/R-WebCrawler-wechat-friendlist1.png)
 
 简单找一下发现网页中的微信好友列表信息并没有呈现在HTML 中，大概可以断定微信好友数据是通过动态加载来显示的，所以直接定位到XHR中，然而XHR列表中的资源太多，哪个里保存着我们需要的数据呢？一个办法是看数据包的大小，估计一下自己的目标数据的大小，缩小查找范围，然后再一一点开剩下的几个候选数据包，比如我们要找的数据包是微信朋友列表，肯定不会小于1kb,然后点开第一个XHR数据包，看**响应**标签里的数据：
 
-![](/picture/wechat-friendlist2.png)
+![](/picture/R-WebCrawler-wechat-friendlist2.png)
 
 点开其中一个：
 
-![](/picture/wechat-friendlist3.png)
+![](/picture/R-WebCrawler-wechat-friendlist3.png)
 
 我们要的朋友列表就是它了！
 
 找到真正的url之后，接下来就是获取请求信息了，切换到Headers版块，Header版块下的3个子信息我们都需要关注，它们是我们构造爬虫请求头的关键。
 
-![](/picture/wechat-friendlist4.png)
+![](/picture/R-WebCrawler-wechat-friendlist4.png)
 
 找到相应的信息之后，我们便可以直接利用httr包在R中构建爬虫请求：
 
@@ -462,7 +464,14 @@ GET方法单次执行请求：
 
 ```
 wechat_friends <- GET(url,add_headers(.headers =headers))
+
+# 查看服务器响应状态，直接输入变量名回车
+wechat_friends
+
+# 从响应中提取原始字符内容：
+content(wechat_friends)
 ```
+
 
 <h4 name="netease-study">POST请求抓取网易云课堂数据</h4>
 
@@ -474,8 +483,8 @@ wechat_friends <- GET(url,add_headers(.headers =headers))
 
 <table>
 <tr>
-	<td><img src=/picture/netease-study1.png border=0></td>
-	<td><img src=/picture/netease-study2.png border=0></td>
+	<td><img src=/picture/R-WebCrawler-netease-study1.png border=0></td>
+	<td><img src=/picture/R-WebCrawler-netease-study2.png border=0></td>
 </tr>
 </table>
 
@@ -509,5 +518,11 @@ url <- "http://study.163.com/p/search/studycourse.json"
 POST方法单次执行请求：
 
 ```
-netease <- POST(url,add_headers(.headers =headers),body =payload, encode="json")
+netease_study <- POST(url,add_headers(.headers =headers),body =payload, encode="json")
+
+# 查看服务器响应状态，直接输入变量名回车
+netease_study
+
+# 从响应中提取原始字符内容：
+content(netease_study)
 ```
