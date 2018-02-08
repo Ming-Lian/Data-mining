@@ -423,7 +423,7 @@ write.csv(house_inf,file="D:/Rdata/datasets/house_inf.csv")
 
 一般我们进行网页数据抓取是先看看网页源代码，看看我们要抓取的数据是否包含在源码中，如果是，则进行静态网页数据抓取，否则说明数据在XHR对象中，需要进行动态网页数据抓取。
 
-<h4 name="wechat-friendlist">GET请求抓取微信好友列表数据</h4>
+<a name="wechat-friendlist"><h4>GET请求抓取微信好友列表数据 [<sup>目录</sup>](#content)</h4></a>
 
 首先登录个人微信网页版，右键打开web开发者工具，下来一大堆请求：
 
@@ -474,7 +474,7 @@ content(wechat_friends)
 ```
 
 
-<h4 name="netease-study">POST请求抓取网易云课堂数据</h4>
+<a name="netease-study"><h4>POST请求抓取网易云课堂数据 [<sup>目录</sup>](#content)</h4></a>
 
 虽说动态网站数据请求也有GET方法的，但POST方法才是动态网页的主要的请求方式。
 
@@ -528,7 +528,7 @@ netease_study
 content(netease_study)
 ```
 
-<h4 name="paramgkb-interested">抓取ParamGKB数据库目标数据</h4>
+<a name="paramgkb-interested"><h4>抓取ParamGKB数据库目标数据 [<sup>目录</sup>](#content)</h4></a>
 
 打开ParamGKB数据库网站，登录，搜索某一种药物，如：donepezil
 
