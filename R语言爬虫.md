@@ -534,10 +534,10 @@ content(netease_study)
 
 <table>
 <tr>
-	<td><img src=/picture/R-WebCrawler-pgkb-1.png border=0><p align="center">原网页</p><td>
+	<td><img src=/picture/R-WebCrawler-pgkb-1.png border=0><p align="center">原网页</p></td>
 </tr>
 <tr>
-	<td><img src=/picture/R-WebCrawler-pgkb-2.png border=0><p align="center">网页源代码</p><td>
+	<td><img src=/picture/R-WebCrawler-pgkb-2.png border=0><p align="center">网页源代码</p></td>
 </tr>
 </table>
 
@@ -553,7 +553,7 @@ content(netease_study)
 
 <table>
 <tr>
-	<td><img src=/picture/R-WebCrawler-pgkb-4.png border=0><td>
-	<td><img src=/picture/R-WebCrawler-pgkb-5.png border=0><td>
+	<td><img src=/picture/R-WebCrawler-pgkb-4.png border=0></td>
+	<td><img src=/picture/R-WebCrawler-pgkb-5.png border=0></td>
 </tr>
 </table>
