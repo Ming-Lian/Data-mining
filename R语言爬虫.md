@@ -18,6 +18,7 @@
 - [实战2：动态数据抓取范例](#practice-2-dynamic)
 	- [GET请求抓取微信好友列表数据](#wechat-friendlist)
 	- [POST请求抓取网易云课堂数据](#netease-study)
+	- [抓取ParamGKB数据库目标数据](#paramgkb-interested)
 
 
 
@@ -526,3 +527,33 @@ netease_study
 # 从响应中提取原始字符内容：
 content(netease_study)
 ```
+
+<h4 name="paramgkb-interested">抓取ParamGKB数据库目标数据</h4>
+
+打开ParamGKB数据库网站，登录，搜索某一种药物，如：donepezil
+
+<table>
+<tr>
+	<td><img src=/picture/R-WebCrawler-pgkb-1.png border=0><p align="center">原网页</p><td>
+</tr>
+<tr>
+	<td><img src=/picture/R-WebCrawler-pgkb-2.png border=0><p align="center">网页源代码</p><td>
+</tr>
+</table>
+
+数据不在源码中，说明要到XHR对象中抓数据了。
+
+这个数据库中我们感兴趣的数据为：
+
+- 点击表格左侧蓝色按钮
+
+![](/picture//R-WebCrawler-pgkb-3.png)
+
+- 点击表格第三列的VARIANT链接
+
+<table>
+<tr>
+	<td><img src=/picture/R-WebCrawler-pgkb-4.png border=0><td>
+	<td><img src=/picture/R-WebCrawler-pgkb-5.png border=0><td>
+</tr>
+</table>
