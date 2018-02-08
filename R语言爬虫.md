@@ -24,7 +24,7 @@
 <h1 name="title">R语言爬虫</h1>
 <p align="right">整理自公众号<strong>数据科学家养成记</strong>系列文章《R语言爬虫系列》</p>
 
-![](/picture/R-WebCrawler-Web-crawler.jpg)
+<p align="center"><img src=/picture/R-WebCrawler-Web-crawler.jpg width="800"></p>
 
 <h3 name="base-html">基础知识1：[HTML基础与R语言解析](https://mp.weixin.qq.com/s/cHQqKulrkBRREPOYF3bGxg) [<sup>目录</sup>](#content)</h3>
 
