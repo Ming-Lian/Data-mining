@@ -570,3 +570,32 @@ content(netease_study)
 	<td><img src=/picture/R-WebCrawler-pgkb-9.png align="middle" border=0></td>
 </tr>
 </table>
+
+构造爬虫请求头:
+
+```
+cookie <- 我的cookie
+headers <- c('Accept'='*/*',
+			'Connection'='keep-alive',
+			'Cookie'=cookie,
+			'Referer'='https://www.pharmgkb.org/variant/PA166154918',
+			'User-Agent'='Mozilla/5.0 (Windows NT 6.1; W…) Gecko/20100101 Firefox/58.0')
+```
+
+二次请求实际的url：
+
+```
+url <- 'https://api.pharmgkb.org/v1/report/variantFrequency?fp=PA166154918&'
+```
+
+GET方法单次执行请求：
+
+```
+pgkb <- GET(url,add_headers(.headers =headers))
+
+# 查看服务器响应状态，直接输入变量名回车
+pgkb
+
+# 从响应中提取原始字符内容：
+content(pgkb)
+```
