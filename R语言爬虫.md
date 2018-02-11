@@ -49,7 +49,7 @@ XML（eXtensible Markup Language）全称叫做可扩展标记语言，首先它
 
 参考以下例子：
 
-![](/picture/R-Web-crawler-xml-example.png)
+![](/picture/R-WebCrawler-xml-example.png)
 
 XML的语法规则：
 - 一个XML文档永远以声明该文档的一行代码来开头：
