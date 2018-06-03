@@ -132,20 +132,21 @@ polymorphic variants on prophylactic therapy response in migraine patients.
 ```
 
 perl脚本：`format_NCBI_abstract.pl`
-> 主要实现的思想：每条记录都包含以下7个部分
+> 主要实现的思想：每条记录都包含以下6/7个部分
 > - 头信息
 > - 文章题目
 > - 作者
-> - 作者信息
+> - 作者信息（可能没有）
 > - 摘要
 > - Copyright
 > - DOI与PMID
 > 
-> 且每部分都用空格隔开，这样如果当前行非空，而前一行为空，则说明进入了一个新的部分，同时对当前所处的部分进行计数，只保留第一部分和第五部分，即头信息和摘要，写进格式化的文本里
+> 且每部分都用空格隔开，这样如果当前行非空，而前一行为空，则说明进入了一个新的部分，同时对当前所处的部分进行计数，只保留第一部分和第四/五部分，即头信息和摘要，写进格式化的文本里
 
 ```
 open FILE,"<$ARGV[0]" or die "$!\n";
 $count=0;
+$author_exist=0;
 $line_previous='';
 while(<FILE>){
 	chomp;
@@ -153,19 +154,38 @@ while(<FILE>){
 	# 判断是否进入新的信息区块
 	if((!$line_previous) && $line_current){
 		$count++;
+		# 判断是否有作者信息部分
+		if($count==4){
+			if($line_current=~/^Author information/){
+				$author_exist=1;
+			}else{
+				$author_exist=0;
+			}
+		}
 	}
 	# 判断是否进入新的记录
 	if($line_current =~ /^\d+\./){
 		$count=1;
 		print ">";
 	}
-	# 写出记录的第一和第五部分
-	if($count==1||$count==5){
-		# 非空行继续追加，遇到空行则换行
-		if($line_current){
-			print $line_current;
-		}else{
-			print "\n";
+	# 是否有作者信息部分，决定是写出记录的第一、四部分，还是第一、五部分
+	if($author_exist){
+		if($count==1||$count==5){
+			# 非空行继续追加，遇到空行则换行
+			if($line_current){
+				print $line_current;
+			}else{
+				print "\n";
+			}
+		}
+	}else{
+		if($count==1||$count==4){
+			# 非空行继续追加，遇到空行则换行
+			if($line_current){
+				print $line_current;
+			}elsif($line_previous){
+				print "\n";
+			}
 		}
 	}
 	$line_previous=$line_current;
@@ -184,12 +204,12 @@ close(FILE);
 $ dos2unix /Path/To/*
 ```
 
-开始批量格式化
+开始批量格式化（由于空行的存在会干扰后续的处理，需要将空行去除）
 
 ```
 $ ls /Path/To/Dir | while read i;
 do
-	perl /Path/To/format_NCBI_abstract.pl /Path/To/Dir/$i >/Path/To/Dir/${i}.format
+	perl /Path/To/format_NCBI_abstract.pl /Path/To/Dir/$i | sed '/^\s*$/d' >/Path/To/Dir/${i}.format
 done
 ```
 
