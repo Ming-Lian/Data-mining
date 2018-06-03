@@ -282,4 +282,4 @@ for line_pairs in f_pairs:
 
 参考资料：
 
-[googletrans使用手册](#https://github.com/ssut/py-googletrans)
+[googletrans使用手册](https://github.com/ssut/py-googletrans)
