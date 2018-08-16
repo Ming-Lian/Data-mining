@@ -9,6 +9,9 @@
 		- [1.2.3. 异步web服务：aiohttp](#install-aiohttp)
 	- [1.3. 安装解析库](#install-resolver-library)
 	- [1.4. 安装爬虫框架](#install-webspider-framework)
+		- [1.4.1. pyspider](#install-webspider-framework-pyspider)
+		- [1.4.2. Scrapy](#install-webspider-framework-scrapy)
+		- [1.4.3. Scrapy-Splash](#install-webspider-framework-scrapy-splash)
 
 
 
@@ -279,6 +282,33 @@ print(tesserocr.image_to_text(image))
 
 <a name="install-webspider-framework"><h3>1.4. 安装爬虫框架 [<sup>目录</sup>](#content)</h3></a>
 
+<a name="install-webspider-framework-pyspider"><h4>1.4.1. pyspider [<sup>目录</sup>](#content)</h4></a>
+
+pyspider是国人binux编写的强大的网络爬虫框架
+
+pyspider支持JavaScript渲染，而这个过程依赖于PhantomJS，所以需要同时安装好PhantomJS
+
+```
+pip install pyspider
+```
+
+测试，直接在命令行下执行：`spider all`，出现如下输出：
+
+<p align="center"><img src=./picture/Python-webcrawler-spiderframework-pyspider.png width=700 /></p>
+
+这时pyspider的Web服务就会在本地的5000端口运行，直接在浏览器中打开`http://localhost:5000`即可进入pyspider的WebUI管理界面
+
+<p align="center"><img src=./picture/Python-webcrawler-spiderframework-pyspider-WebUI.png width=700 /></p>
+
+<a name="install-webspider-framework-scrapy"><h4>1.4.2. Scrapy [<sup>目录</sup>](#content)</h4></a>
+
+Scrapy是一个十分强大的爬虫框架，依赖的库比较多，至少包括Twisted、lxml和pyOpenSSL，此时使用conda进行安装最为方便
+
+```
+$ conda install Scrapy
+```
+
+测试：在命令行输入`scrapy`，若输出帮助文档则说明安装成功
 
 
 
