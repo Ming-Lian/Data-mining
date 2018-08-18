@@ -12,7 +12,10 @@
 		- [1.4.1. pyspider](#install-webspider-framework-pyspider)
 		- [1.4.2. Scrapy](#install-webspider-framework-scrapy)
 		- [1.4.3. Scrapy-Splash](#install-webspider-framework-scrapy-splash)
-
+- [2. 爬虫基本库的使用](#usage-of-basic-library)
+	- [2.1. urllib](#usage-urllib) 
+		- [2.1.1. 发送请求](#usage-urllib-send-request)
+		- [2.1.2. 处理异常](#usage-urllib-solve-error)
 
 
 
@@ -310,7 +313,180 @@ $ conda install Scrapy
 
 测试：在命令行输入`scrapy`，若输出帮助文档则说明安装成功
 
+<a name="usage-of-basic-library"><h2>2. 爬虫基本库的使用 [<sup>目录</sup>](#content)</h2></a>
 
+<a name="usage-urllib"><h3>2.1. urllib [<sup>目录</sup>](#content)</h3></a>
+
+urllib包含以下3个主要模块：
+
+> - request 最基本的HTTP请求模块，可以用来模拟发送请求
+> - error 异常处理模块，如果出现请求错误，可以捕获这些异常，然后进行重试或者其他操作以保证程序不会意外终止
+> - parse 一个工具模块，提供了许多URL处理方法，比如拆分解析、合并等
+
+<a name="usage-urllib-send-request"><h4>2.1.1. 发送请求 [<sup>目录</sup>](#content)</h4></a>
+
+**1、urlopen**
+
+- **基本用法**
+
+	利用最基本的urlopen( )方法，可以完成最基本的简单网页的GET请求抓取
+	
+	```
+	import urllib.request
+	
+	response = urllib.request.urlopen('https://www.python.org')
+	print(response.read().decode('utf-8'))
+	```
+	
+	查看响应类型：
+	
+	```
+	type(response)
+	
+	<class 'http.client.HTTPResponse'>
+	```
+	
+	一些方法的使用：
+	
+	```
+	>>> print(response.status)
+	200
+	
+	>>> print(response.getheaders())
+	[('Server', 'nginx'), ('Content-Type', 'text/html; charset=utf-8'), ('X-Frame-Options', 'SAMEORIGIN'), ('x-xss-protection', '1; mode=block'), ('X-Clacks-Overhead', 'GNU Terry Pratchett'), ('Via', '1.1 varnish'), ('Content-Length', '48809'), ('Accept-Ranges', 'bytes'), ('Date', 'Fri, 17 Aug 2018 06:31:57 GMT'), ('Via', '1.1 varnish'), ('Age', '3242'), ('Connection', 'close'), ('X-Served-By', 'cache-iad2145-IAD, cache-hkg17926-HKG'), ('X-Cache', 'HIT, HIT'), ('X-Cache-Hits', '9, 10'), ('X-Timer', 'S1534487518.955612,VS0,VE0'), ('Vary', 'Cookie'), ('Strict-Transport-Security', 'max-age=63072000; includeSubDomains')]
+	
+	>>> print(response.getheader('Server'))
+	nginx
+	```
+
+- **传递参数**
+
+	1. data参数：添加额外数据
+	
+		```
+		import urllib.parse
+		import urllib.request
+		
+		data = bytes(urllib.parse.urlencode({'word':'hello'}),encoding='utf-8')
+		response = urllib.request.urlopen('http://httpbin.org/post',data=data)
+		print(response.read())
+		```
+
+	2. timeout参数：设置超时时间，单位为秒
+	
+		```
+		response = urllib.request.urlopen('http://httpbin.org/get',timeout=0.1) # 按常理，0.1秒是基本不可能得到服务器响应的
+		```
+
+		出现以下报错信息：
+
+		```
+		Traceback (most recent call last):
+		  File "<stdin>", line 1, in <module>
+		  File "/home/pi/miniconda3/lib/python3.4/urllib/request.py", line 161, in urlopen
+		    return opener.open(url, data, timeout)
+		  ...
+		urllib.error.URLError: <urlopen error timed out>
+		```
+
+		其抛出的是URLError异常
+
+		可以利用try excep语句来实现，若长时间没有响应就跳过它的抓取
+
+		```
+		import socket
+		import urllib.request
+		import urllib.error
+		
+		try:
+			response = urllib.request.urlopen('http://httpbin.org/get',timeout=0.1)
+		except urllib.error.URLError as e:
+			if isinstance(e.reason,socket.timeout):
+				print('TIME OUT')
+		```
+
+**2、Request**
+
+利用urlopen( ) 方法可以实现最基本的请求发起，但是这几个简单的参数还不足够构建一个完整的请求，如果想在请求中加入Header等信息，可以利用Request：
+
+```
+import urllib.request
+
+request = urllib.request.Request('https://python.org')
+response = urllib.request.urlopen(request)
+```
+
+依然使用的是urlopen( ) 来发生请求，只不过这次该方法的参数不再是URL，而是一个Request类型对象
+
+构造Request对象：
+
+```
+urllib.request.Request(url,data=None,headers={},origin_req_host=None,method=None)
+```
+
+**3、高级用法**
+
+处理高级操作：Cookies处理，代理设置等等
+
+需要使用到Handler工具，它是urllib.request模块里的BaseHandler类，它是所有Handler的父类
+其中一个重要的Handler类是OpenerDirector类，可以称之为Opener
+
+1. **验证**
+
+	有些网站在打开的时候会弹出提示框，直接提示你输入用户名和密码，验证成功后才能查看页面
+	
+	如果要请求这样的页面，需要借助 HTTPBasicAuthHandler
+	
+	```
+	from urllib.request import HTTPPasswordMgrWithDefaultRealm,HTTPBasicAuthHandler,build_opener
+	from urllib.error import URLError
+	
+	username = 'username'
+	password = 'password'
+	url = 'https://...'
+
+	p = HTTPPasswordMgrWithDefaultRealm()
+	p.add_password(None,url,username,password)
+	auth_handler = HTTPBasicAuthHandler(p)
+	opener = build_opener(auth_handler)
+
+	try:
+		result = opener.open(url)
+		html = result.read().decode('utf-8')
+		print(html)
+	except URLError as e:
+		print(e.reason)
+	```
+
+2. **代理**
+
+	```
+	from urllib.error import URLError
+	from urllib.request import ProxyHandler,build_opener
+	
+	proxy_handler=ProxyHandler({'http':'http://localhost:9743','https':'https://localhost:9743'})
+	opener=build_opener(proxy_handler)
+	try:
+	        response=opener.open('https://www.baidu.com')
+	        print(response.read().decode('utf-8'))
+	except URLError as e:
+	        print(e.reason)
+	```
+
+3. **Cookies**
+
+	```
+	import http.cookiejar, urllib.request
+	
+	cookie = http.cookiejar.CookieJar()
+	handler = urllib.request.HTTPCookieProcessor(cookie)
+	opener = urllib.request.build_opener(handler)
+	response = opener.open('http://www.baidu.com')
+	for item in cookie:
+	    print(item.name+"="+item.value)
+	```
+
+<a name="usage-urllib-solve-error"><h4>2.1.2. 处理异常 [<sup>目录</sup>](#content)</h4></a>
 
 
 
