@@ -16,6 +16,7 @@
 	- [2.1. urllib](#usage-urllib) 
 		- [2.1.1. 发送请求](#usage-urllib-send-request)
 		- [2.1.2. 处理异常](#usage-urllib-solve-error)
+		- [2.1.3. 解析链接](#usage-urllib-parse-url)
 
 
 
@@ -487,6 +488,190 @@ urllib.request.Request(url,data=None,headers={},origin_req_host=None,method=None
 	```
 
 <a name="usage-urllib-solve-error"><h4>2.1.2. 处理异常 [<sup>目录</sup>](#content)</h4></a>
+
+在发送请求后可能出现异常，如果不处理这些异常，程序很可能因报错而终止，所以异常处理十分必要
+
+urllib的error模块定义了由request模块产生的异常，如果出现了问题，request模块便会抛出error模块中定义的异常：
+
+> URLError和HTTPError类，其中HTTPError类URLError类的子类
+
+URLError
+
+```
+from urllib import request, error
+try:
+    response = request.urlopen('http://cuiqingcai.com/index.htm')
+except error.URLError as e:
+    print(e.reason)
+```
+
+HTTPError
+
+```
+from urllib import request,error
+try:
+    response = request.urlopen('http://cuiqingcai.com/index.htm')
+except error.HTTPError as e:
+    print(e.reason, e.code, e.headers, sep='\n')
+```
+
+通常会先去捕获子类的错误，再去捕获父类的错误
+
+```
+from urllib import request, error
+
+try:
+    response = request.urlopen('http://cuiqingcai.com/index.htm')
+except error.HTTPError as e:
+    print(e.reason, e.code, e.headers, sep='\n')
+except error.URLError as e:
+    print(e.reason)
+else:
+    print('Request Successfully')
+```
+
+<a name="usage-urllib-parse-url"><h4>2.1.3. 解析链接 [<sup>目录</sup>](#content)</h4></a>
+
+1、 urlparse
+
+该方法可以实现URL的识别和分段：
+
+```
+from urllib.parse import urlparse
+
+result = urlparse('http://www.baidu.com/index.html;user?id=5#comment')
+print(type(result), result)
+
+
+<class 'urllib.parse.ParseResult'> ParseResult(scheme='http', netloc='www.baidu.com', path='/index.html', params='user', query='id=5', fragment='comment')
+```
+
+2、 urlunparse
+
+它是作业与urlparse相反，其接受的参数**长度必须为6**
+
+```
+from urllib.parse import urlunparse
+
+data = ['http', 'www.baidu.com', 'index.html', 'user', 'a=6', 'comment']
+print(urlunparse(data))
+
+
+http://www.baidu.com/index.html;user?a=6#comment
+```
+
+3、urlsplit
+
+与urlparse相似，不过它不再单独解析parms这一部分，只返回5个结果
+
+```
+from urllib.parse import urlsplit
+
+result = urlsplit('http://www.baidu.com/index.html;user?id=5#comment')
+print(result)
+
+
+SplitResult(scheme='http', netloc='www.baidu.com', path='/index.html;user', query='id=5', fragment='comment')
+```
+
+4、urlunsplit
+
+与urlunparse相似，唯一区别是长度必须是5
+
+```
+from urllib.parse import urlunsplit
+
+data = ['http', 'www.baidu.com', 'index.html', 'a=6', 'comment']
+print(urlunsplit(data))
+```
+
+5、urljoin
+
+用法：`urljoin(url_1,url_2)`
+
+提供一个base_url作为第一个参数，将新的链接作为第二个参数，该方法会解析base_url的scheme、netloc和path这3个内容并对新链接缺失的部分进行补充
+
+```
+from urllib.parse import urljoin
+
+print(urljoin('http://www.baidu.com', 'FAQ.html'))
+print(urljoin('http://www.baidu.com', 'https://cuiqingcai.com/FAQ.html'))
+print(urljoin('http://www.baidu.com/about.html', 'https://cuiqingcai.com/FAQ.html'))
+print(urljoin('http://www.baidu.com/about.html', 'https://cuiqingcai.com/FAQ.html?question=2'))
+print(urljoin('http://www.baidu.com?wd=abc', 'https://cuiqingcai.com/index.php'))
+print(urljoin('http://www.baidu.com', '?category=2#comment'))
+print(urljoin('www.baidu.com', '?category=2#comment'))
+print(urljoin('www.baidu.com#comment', '?category=2'))
+```
+
+输出
+
+```
+http://www.baidu.com/FAQ.html
+https://cuiqingcai.com/FAQ.html
+https://cuiqingcai.com/FAQ.html
+https://cuiqingcai.com/FAQ.html?question=2
+https://cuiqingcai.com/index.php
+http://www.baidu.com?category=2#comment
+www.baidu.com?category=2#comment
+www.baidu.com?category=2
+```
+
+6、urlencode
+
+它在构造GET请求参数的时候非常有用
+
+```
+from urllib.parse import urlencode
+
+params = {
+    'name': 'germey',
+    'age': 22
+}
+base_url = 'http://www.baidu.com?'
+url = base_url + urlencode(params)
+print(url)
+
+
+http://www.baidu.com?age=22&name=germey
+```
+
+urlencode( )方法可以将字典形式的变量序列化，转化为GET请求的参数
+
+7、parse_qs
+
+有了序列化，自然就有反序列化
+
+```
+from urllib.parse import parse_qs
+
+query = 'name=germey&age=22'
+print(parse_qs(query))
+
+
+{'age': ['22'], 'name': ['germey']}
+```
+
+8、quote
+
+URL中带有中文参数时，可能会导致乱码的问题，此时需要将中文字符转化为URL编码
+
+```
+from urllib.parse import quote
+
+keyword = '壁纸'
+url = 'https://www.baidu.com/s?wd=' + quote(keyword)
+print(url)
+
+
+https://www.baidu.com/s?wd=%E5%A3%81%E7%BA%B8
+```
+
+
+
+
+
+
 
 
 
