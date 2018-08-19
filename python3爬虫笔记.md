@@ -25,6 +25,10 @@
 			- [2.2.2.2. Cookies](#usage-requests-advanced-cookies)
 			- [2.2.2.3. 会话维持](#usage-requests-advanced-keep-session)
 			- [2.2.2.4. SSL证书验证](#usage-requests-advanced-verify-ssl)
+			- [2.2.2.5. 代理设置](#usage-requests-advanced-set-proxy)
+			- [2.2.2.6. 身份认证](#usage-requests-advanced-auth)
+			- [2.2.2.7. Prepared Request](#usage-requests-advanced-prepared-request)
+	- [2.3. 正则表达式](#regex)
 
 
 
@@ -926,7 +930,89 @@ response = requests.get('https://www.12306.cn', cert=('/path/server.crt', '/path
 print(response.status_code)
 ```
 
+<a name="usage-requests-advanced-set-proxy"><h4>2.2.2.5. 代理设置 [<sup>目录</sup>](#content)</h4></a>
 
+```
+import requests
+
+proxies = {
+  'http': 'http://10.10.1.10:3128',	# 请换成自己的有效代理
+  'https': 'http://10.10.1.10:1080',
+}
+
+requests.get('https://www.taobao.com', proxies=proxies)
+```
+
+若代理需要使用HTTP Basic Auth，可以使用类似 `http://user:password@host:port` 这样的语法来设置代理
+
+```
+import requests
+
+proxies = {
+    'https': 'http://user:password@10.10.1.10:3128/',
+}
+requests.get('https://www.taobao.com', proxies=proxies)
+```
+
+<a name="usage-requests-advanced-auth"><h4>2.2.2.6. 身份认证 [<sup>目录</sup>](#content)</h4></a>
+
+在访问网站时，可能会遇到认证界面，此时可以使用requests自带的身份认证功能
+
+```
+import requests
+from requests.auth import HTTPBasicAuth
+
+r = requests.get('http://localhost:5000', auth=HTTPBasicAuth('username', 'password'))
+print(r.status_code)
+```
+
+更简单的写法（不需要传入一个HTTPBasicAuth类）：
+
+```
+import requests
+
+r = requests.get('http://localhost:5000', auth=('username', 'password'))
+print(r.status_code)
+```
+
+<a name="usage-requests-advanced-prepared-request"><h4>2.2.2.7. Prepared Request [<sup>目录</sup>](#content)</h4></a>
+
+如同urllib中提到的，我们可以将请求表示为数据结构，这个数据结构就叫 **Prepared Request**
+
+```
+from requests import Request, Session
+
+url = 'http://httpbin.org/post'
+data = {
+    'name': 'germey'
+}
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36'
+}
+s = Session()
+req = Request('POST', url, data=data, headers=headers)
+prepped = s.prepare_request(req)
+r = s.send(prepped)
+print(r.text)
+```
+
+<a name="regex"><h3>2.3. 正则表达式 [<sup>目录</sup>](#content)</h3></a>
+
+Python的re库提供了整个正则表达式的实现
+
+1、 match( )
+
+如果匹配就返回匹配成功的结果；如果不匹配，就返回None
+
+```
+match(regex, str)
+```
+
+匹配得到的结果是一个SRE_Match对象，该对象有两个方法：
+
+> - group( )：输出匹配到的内容
+> 
+> - span( )：输出匹配的范围
 
 
 
