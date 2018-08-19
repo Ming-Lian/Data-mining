@@ -17,6 +17,15 @@
 		- [2.1.1. 发送请求](#usage-urllib-send-request)
 		- [2.1.2. 处理异常](#usage-urllib-solve-error)
 		- [2.1.3. 解析链接](#usage-urllib-parse-url)
+		- [2.1.4. 分析Robots协议](#usage-urllib-parse-robots-protocol)
+	- [2.2. requests](#usage-requests)
+		- [2.2.1. 基本用法](##usage-requests-basic)
+		- [2.2.2. 高级用法](#usage-requests-advanced)
+			- [2.2.2.1. 文件上传](#usage-requests-advanced-file-upload)
+			- [2.2.2.2. Cookies](#usage-requests-advanced-cookies)
+			- [2.2.2.3. 会话维持](#usage-requests-advanced-keep-session)
+			- [2.2.2.4. SSL证书验证](#usage-requests-advanced-verify-ssl)
+
 
 
 
@@ -667,7 +676,255 @@ print(url)
 https://www.baidu.com/s?wd=%E5%A3%81%E7%BA%B8
 ```
 
+<a name="usage-urllib-parse-robots-protocol"><h4>2.1.4. 分析Robots协议 [<sup>目录</sup>](#content)</h4></a>
 
+每个网站的Robots协议一般保存在站点的根目录下的`robots.txt`文件中
+
+例如：
+
+```
+User-agent: Baiduspider
+Disallow: /baidu
+Disallow: /s?
+Disallow: /ulink?
+Disallow: /link?
+Disallow: /home/news/data/
+```
+
+可以使用robotparser模块解析robots.txt
+
+```
+from urllib.robotparser import RobotFileParser
+
+rp = RobotFileParser()
+rp.set_url('http://www.jianshu.com/robots.txt')
+rp.read()
+print(rp.can_fetch('*', 'http://www.jianshu.com/p/b67554025d7d'))
+print(rp.can_fetch('*', "http://www.jianshu.com/search?q=python&page=1&type=collections"))
+```
+
+<a name="usage-requests"><h3>2.2. requests [<sup>目录</sup>](#content)</h3></a>
+
+urllib在使用过程中有一些不方便的地方，比如处理网页页面验证和Cookies时，需要写Opener和Handler来处理
+
+requests可以更加方便的实现这些操作
+
+<a name="usage-requests-basic"><h4>2.2.1. 基本用法 [<sup>目录</sup>](#content)</h4></a>
+
+```
+import requests
+
+# GET方法
+r= requests.get(url,headers=headers,params=data)	# 以字典形式传入headers和data
+
+# POST方法
+r= requests.post(url,headers=headers,data=data)
+```
+
+有时需要构造header，否则无法正常请求
+
+```
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'
+}
+```
+
+- 抓取网页，然后用正则表达式进行匹配
+
+```
+import requests
+import re
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'
+}
+r = requests.get("https://www.zhihu.com/explore", headers=headers)
+pattern = re.compile('explore-feed.*?question_link.*?>(.*?)</a>', re.S)
+titles = re.findall(pattern, r.text)
+print(titles)
+```
+
+- 抓取二进制数据
+
+
+```
+import requests
+
+r = requests.get("https://github.com/favicon.ico")
+with open('favicon.ico', 'wb') as f:
+    f.write(r.content)
+```
+
+以字符串形式直接打印会乱码： `print(r.text)`
+
+以二进制形式打印：
+
+```
+print(r.content)
+
+b'\x00\x00\x01\x00\x02\x00\x10\x10\x00\x00\x01\x00 ...'
+```
+
+- 响应
+
+requests提供了一个内置的状态码查询对象requests.codess，可以用来判断请求是否成功
+
+```
+import requests
+
+r = requests.get('http://www.jianshu.com')
+exit() if not r.status_code == requests.codes.ok else print('Request Successfully')
+```
+
+<a name="usage-requests-advanced"><h4>2.2.2. 高级用法 [<sup>目录</sup>](#content)</h4></a>
+
+<a name="usage-requests-advanced-file-upload"><h4>2.2.2.1. 文件上传 [<sup>目录</sup>](#content)</h4></a>
+
+```
+import requests
+
+files = {'file': open('favicon.ico', 'rb')}
+r = requests.post('http://httpbin.org/post', files=files)
+print(r.text)
+```
+
+<a name="usage-requests-advanced-cookies"><h4>2.2.2.2. Cookies [<sup>目录</sup>](#content)</h4></a>
+
+获取Cookies
+
+```
+import requests
+
+r = requests.get('https://www.baidu.com')
+print(r.cookies)
+for key, value in r.cookies.items():
+    print(key + '=' + value)
+```
+
+可以将Cookies在发送请求时加入headers中维持登录状态
+
+```
+import requests
+
+headers = {
+    'Cookie': 'q_c1=31653b264a074fc9a57816d1ea93ed8b|1474273938000|1474273938000; d_c0="AGDAs254kAqPTr6NW1U3XTLFzKhMPQ6H_nc=|1474273938"; __utmv=51854390.100-1|2=registration_date=20130902=1^3=entry_date=20130902=1;a_t="2.0AACAfbwdAAAXAAAAso0QWAAAgH28HQAAAGDAs254kAoXAAAAYQJVTQ4FCVgA360us8BAklzLYNEHUd6kmHtRQX5a6hiZxKCynnycerLQ3gIkoJLOCQ==";z_c0=Mi4wQUFDQWZid2RBQUFBWU1DemJuaVFDaGNBQUFCaEFsVk5EZ1VKV0FEZnJTNnp3RUNTWE10ZzBRZFIzcVNZZTFGQmZn|1474887858|64b4d4234a21de774c42c837fe0b672fdb5763b0',
+    'Host': 'www.zhihu.com',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
+}
+r = requests.get('https://www.zhihu.com', headers=headers)
+print(r.text)
+```
+
+也可以通过cookies参数来设置，不过这需要构造一个RequestsCookieJar对象
+
+```
+import requests
+
+cookies = 'q_c1=31653b264a074fc9a57816d1ea93ed8b|1474273938000|1474273938000; d_c0="AGDAs254kAqPTr6NW1U3XTLFzKhMPQ6H_nc=|1474273938"; __utmv=51854390.100-1|2=registration_date=20130902=1^3=entry_date=20130902=1;a_t="2.0AACAfbwdAAAXAAAAso0QWAAAgH28HQAAAGDAs254kAoXAAAAYQJVTQ4FCVgA360us8BAklzLYNEHUd6kmHtRQX5a6hiZxKCynnycerLQ3gIkoJLOCQ==";z_c0=Mi4wQUFDQWZid2RBQUFBWU1DemJuaVFDaGNBQUFCaEFsVk5EZ1VKV0FEZnJTNnp3RUNTWE10ZzBRZFIzcVNZZTFGQmZn|1474887858|64b4d4234a21de774c42c837fe0b672fdb5763b0'
+jar = requests.cookies.RequestsCookieJar()
+headers = {
+    'Host': 'www.zhihu.com',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36'
+}
+for cookie in cookies.split(';'):
+    key, value = cookie.split('=', 1)
+    jar.set(key, value)
+r = requests.get('http://www.zhihu.com', cookies=jar, headers=headers)
+print(r.text)
+```
+
+<a name="usage-requests-advanced-keep-session"><h4>2.2.2.3. 会话维持 [<sup>目录</sup>](#content)</h4></a>
+
+在requests中，如果直接用get( ) 或post( )方法的确可以做到模拟网页的请求，但实际上相当于不同的会话
+
+> 设想一个这样的场景：
+> 
+> 第一个请求用post( ) 方法登录了某个网站，第二次想获取成功登录后的个人信息，你又用了一次get( ) 方法去请求个人信息的页面。实际上这相当于打开了第二个浏览器，是完全不同的会话，肯定不能获得你想要的个人信息
+
+```
+import requests
+
+requests.get('http://httpbin.org/cookies/set/number/123456789')	# 请求测试网站，并设置一个cookie，名称为number，值为123456789
+r = requests.get('http://httpbin.org/cookies')	# 请求http://httpbin.org/cookies网站，获取当前的cookie
+print(r.text)
+
+
+{
+  "cookies": {}
+}
+```
+
+用session试试：
+
+```
+import requests
+
+s = requests.Session()
+s.get('http://httpbin.org/cookies/set/number/123456789')
+r = s.get('http://httpbin.org/cookies')
+print(r.text)
+
+
+{
+  "cookies": {
+    "number": "123456789"
+  }
+}
+```
+
+<a name="usage-requests-advanced-verify-ssl"><h4>2.2.2.4. SSL证书验证 [<sup>目录</sup>](#content)</h4></a>
+
+当发送HTTP请求的时候，它会检查SSL证书，我们可以使用verify参数控制是否检查次证书。默认会自动进行证书检查
+
+测试12306网站的SSL证书
+
+```
+import requests
+
+response = requests.get('https://www.12306.cn')	# 认证失败报错
+print(response.status_code)
+```
+
+关闭自动认证：
+
+```
+response = requests.get('https://www.12306.cn', verify=False)	# 虽然关闭了认证，但任然会给出一条警告信息
+print(response.status_code)
+
+200
+```
+
+屏蔽警告信息的方法：
+
+1、
+
+```
+import requests
+from requests.packages import urllib3
+
+urllib3.disable_warnings()
+response = requests.get('https://www.12306.cn', verify=False)
+print(response.status_code)
+```
+
+2、
+
+```
+import logging
+import requests
+logging.captureWarnings(True)
+response = requests.get('https://www.12306.cn', verify=False)
+print(response.status_code)
+```
+
+我们也可以指定本地的认证证书
+
+```
+import requests
+
+response = requests.get('https://www.12306.cn', cert=('/path/server.crt', '/path/key'))
+print(response.status_code)
+```
 
 
 
