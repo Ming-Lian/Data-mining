@@ -1000,7 +1000,9 @@ print(r.text)
 
 Python的re库提供了整个正则表达式的实现
 
-1、 match( )
+**1、 match( )**
+
+match( )方法会尝试**从字符串的起始位置匹配正则表达式**
 
 如果匹配就返回匹配成功的结果；如果不匹配，就返回None
 
@@ -1013,6 +1015,115 @@ match(regex, str)
 > - group( )：输出匹配到的内容
 > 
 > - span( )：输出匹配的范围
+
+**2、匹配目标**
+
+如果想从字符串中提取一部分内容，可以使用括号( )将想提取的子字符串括起来
+
+```
+import re
+
+content = 'Hello 1234567 World_This is a Regex Demo'
+result = re.match('^Hello\s(\d+)\sWorld', content)
+print(result)
+print(result.group())	# 输出完整的匹配结果
+print(result.group(1))	# 输出第一个被括号包围的匹配结果
+print(result.span())
+
+
+<_sre.SRE_Match object; span=(0, 19), match='Hello 1234567 World'>
+Hello 1234567 World
+1234567
+(0, 19)
+```
+**3、贪婪与非贪婪**
+
+> - `.*` 贪婪匹配
+> 
+> - `.*?` 非贪婪匹配
+
+贪婪匹配
+
+```
+import re
+
+content = 'Hello 1234567 World_This is a Regex Demo'
+result = re.match('^He.*(\d+).*Demo$', content)
+print(result)
+print(result.group(1))
+
+
+<_sre.SRE_Match object; span=(0, 40), match='Hello 1234567 World_This is a Regex Demo'>
+7
+```
+
+非贪婪匹配
+
+```
+import re
+
+content = 'Hello 1234567 World_This is a Regex Demo'
+result = re.match('^He.*?(\d+).*Demo$', content)
+print(result)
+print(result.group(1))
+
+
+<_sre.SRE_Match object; span=(0, 40), match='Hello 1234567 World_This is a Regex Demo'>
+1234567
+```
+
+**4、修饰符**
+
+`.` 匹配的是除换行符之外的任意字符，当遇到换行符时，`.*?`就不能匹配了，所以导致匹配失败
+
+```
+import re
+
+content = '''Hello 1234567 World_This
+is a Regex Demo
+'''
+result = re.match('^He.*?(\d+).*?Demo$', content)
+print(result.group(1))
+
+
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'NoneType' object has no attribute 'group'
+```
+
+这时，只需要添加一个修饰符 re.S
+
+```
+result = re.match('^He.*?(\d+).*?Demo$', content,re.S)
+```
+
+修饰符 re.S 的作用是使 `.` 匹配包括换行符在内的所有字符
+
+这个 re.S 在网页匹配中经常使用，因为HTML节点经常会有换行，加上它，就可以匹配节点与节点之间的换行了
+
+其他常用的修饰符：
+
+| 修饰符 | 描述 |
+|:---:|:---:|
+| re.I | 使匹配对大小写不敏感 |
+| re.S | 使 `.` 匹配包括换行符在内的所有字符 |
+
+**5、search**
+
+match( )方法是尝试**从字符串的起始位置匹配正则表达式**，一旦开头不匹配，那么整个匹配就失败了
+
+```
+mport re
+
+content = 'Extra stings Hello 1234567 World_This is a Regex Demo Extra stings'
+result = re.match('Hello.*?(\d+).*?Demo', content)
+print(result)
+
+
+None
+```
+
+另外一个方法search( )，它在匹配时会扫描整个字符串，然后返回第一个成功匹配的结果。因此未来匹配方便，我们可以**尽量使用search( )方法**
 
 
 
