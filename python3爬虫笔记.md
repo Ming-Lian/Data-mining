@@ -19,7 +19,7 @@
 		- [2.1.3. 解析链接](#usage-urllib-parse-url)
 		- [2.1.4. 分析Robots协议](#usage-urllib-parse-robots-protocol)
 	- [2.2. requests](#usage-requests)
-		- [2.2.1. 基本用法](##usage-requests-basic)
+		- [2.2.1. 基本用法](#usage-requests-basic)
 		- [2.2.2. 高级用法](#usage-requests-advanced)
 			- [2.2.2.1. 文件上传](#usage-requests-advanced-file-upload)
 			- [2.2.2.2. Cookies](#usage-requests-advanced-cookies)
