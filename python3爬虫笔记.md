@@ -29,6 +29,7 @@
 			- [2.2.2.6. 身份认证](#usage-requests-advanced-auth)
 			- [2.2.2.7. Prepared Request](#usage-requests-advanced-prepared-request)
 	- [2.3. 正则表达式](#regex)
+	- [2.4. 实战：爬取猫眼电影排行](#inaction-maoyan-top100)
 
 
 
@@ -1223,6 +1224,103 @@ result3 = re.sub(pattern, '', content3)
 print(result1, result2, result3)
 ```
 
+<a name="inaction-maoyan-top100"><h3>2.4. 实战：爬取猫眼电影排行 [<sup>目录</sup>](#content)</h3></a>
+
+1、网页分析
+
+目标站点为`http://maoyan.com/board/4`
+
+<p align="center"><img src=./picture/Python-webcrawler-InAction-maoyan-top100.png width=800 /></p>
+
+翻到下一页后URL变为：`http://maoyan.com/board/4?offset=10`
+
+可以看到这个比之前那个URL多了一个参数offset=10，初步推断为一个偏移量的参数
+
+2、抓取首页
+
+```
+import requests
+
+def get_one_page(url):
+	headers = {
+		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'
+	}
+	response = requests.get(url,headers=headers)
+	if response.status_code == 200:
+		return response.text
+	return None
+
+def main():
+	url = 'http://maoyan.com/board/4'
+	html = get_one_page(url)
+	print(html)
+
+main()
+```
+
+3、正则提取
+
+<p align="center"><img src=./picture/Python-webcrawler-InAction-maoyan-top100-2.png width=800 /></p>
+
+根据网页源代码，编辑正则表达式进行正则提取
+
+```
+def parse_one_page(html):
+	pattern = re.compile('<dd>.*?board-index.*?>(\d+)</i>.*?data-src="(.*?)".*?name"><a'
+                         + '.*?>(.*?)</a>.*?star">(.*?)</p>.*?releasetime">(.*?)</p>'
+                         + '.*?integer">(.*?)</i>.*?fraction">(.*?)</i>.*?</dd>',re.S)
+	items = re.findall(pattern,html)
+	# 原始的匹配结果比较杂乱，处理一下遍历提取结果并生成字典
+	for item in items:
+        yield {
+            'index': item[0],
+            'image': item[1],
+            'title': item[2],
+            'actor': item[3].strip()[3:],
+            'time': item[4].strip()[5:],
+            'score': item[5] + item[6]
+        }
+```
+
+4、写入文件
+
+通过JSON库的dumps( )方法实现字典的序列化，并指定ensure_ascii参数为False，这样可以保证输出结果是中文形式而不是Unicode编码
+
+```
+def write_to_file(content):
+    with open('result.txt', 'a', encoding='utf-8') as f:
+        f.write(json.dumps(content, ensure_ascii=False) + '\n')
+```
+
+5、整合代码
+
+```
+def main():
+    url = 'http://maoyan.com/board/4'
+    html = get_one_page(url)
+    for item in parse_one_page(html):
+        write_to_file(item)
+```
+
+6、分页爬取
+
+```
+if __name__ == '__main__':
+    for i in range(10):
+        main(offset=i * 10)
+        time.sleep(1)
+```
+
+对main()方法稍作修改，接受一个offset值作为偏移量
+
+```
+def main(offset):
+    url = 'http://maoyan.com/board/4?offset=' + str(offset)
+    html = get_one_page(url)
+    for item in parse_one_page(html):
+        print(item)
+        write_to_file(item)
+```
 
 
 
