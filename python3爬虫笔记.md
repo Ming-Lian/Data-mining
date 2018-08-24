@@ -30,7 +30,8 @@
 			- [2.2.2.7. Prepared Request](#usage-requests-advanced-prepared-request)
 	- [2.3. 正则表达式](#regex)
 	- [2.4. 实战：爬取猫眼电影排行](#inaction-maoyan-top100)
-
+- [3. 解析库的使用](#usage-of-resolver-library)
+	- [3.1. 使用XPath](#use-xpath)
 
 
 
@@ -1322,7 +1323,215 @@ def main(offset):
         write_to_file(item)
 ```
 
+<a name="usage-of-resolver-library"><h2>3. 解析库的使用 [<sup>目录</sup>](#content)</h2></a>
 
+使用正则表达式提取页面信息，比较繁琐
+
+对于网页的节点来说，它可以定义id、class或其他属性。而且节点之间还有层次关系，在网页中可以通过XPath或CSS选择器来定位一个或多个节点。那么在页面解析的时候，利用XPath或CSS选择器来提取某个节点，然后再调用相应的方法获取它的正文内容或属性，就可以提取我们想要的任意信息了
+
+<a name="use-xpath"><h3>3.1. 使用XPath [<sup>目录</sup>](#content)</h3></a>
+
+需要使用到lxml库
+
+XPath常用规则：
+
+| 表达式 | 描述 |
+|:---|:---|
+| / | 从当前节点选择直接子节点 |
+| // | 从当前节点选择子孙节点 |
+| . | 选择当前节点 |
+| .. | 选择当前节点的父节点 |
+| @ | 选取属性 |
+
+```
+from lxml import etree
+
+#  该段HTML文本中最后一个li节点没有闭合
+text = '''
+<div>
+    <ul>
+         <li class="item-0"><a href="link1.html">first item</a></li>
+         <li class="item-1"><a href="link2.html">second item</a></li>
+         <li class="item-inactive"><a href="link3.html">third item</a></li>
+         <li class="item-1"><a href="link4.html">fourth item</a></li>
+         <li class="item-0"><a href="link5.html">fifth item</a>
+     </ul>
+ </div>
+'''
+html = etree.HTML(text) # 构造XPatn解析对象，etree模块会自动修正HTML文本
+result = etree.tostring(html) # 得到修正后的HTML文本
+print(result.decode('utf-8'))
+```
+
+1、选取所有节点
+
+```
+html.xpath('//*')
+```
+
+2、选取所有的 li 节点
+
+```
+html.xpath('//li')
+```
+
+3、选取所有 li 节点下的 a 节点（a节点是li节点的直接子节点）
+
+```
+html.xpath('//li/a')
+```
+4、选取ul节点下的a节点（a节点不是ul节点的直接子节点）
+
+```
+html.xpath('//ul//a')
+```
+
+由于a节点不是ul节点的直接子节点，所以如果用`//ul/a`就无法获得任何结果
+
+5、父节点：选取href属性为`link4.html`的a节点的父节点，然后获取它的class属性
+
+```
+html.xpath('//a[@class="link4.html"]/../@class')
+```
+
+也可以通过`parent::`来获取父节点
+
+```
+html.xpath('//a[@class="link4.html"]/parent::*/@class')
+```
+
+6、文本获取
+
+使用XPath的text( )方法，利用获取节点中的文本
+
+例如提取以下两个class属性值为 `item-0` 的 li 节点中的文本：
+
+```
+<li class="item-0"><a href="link1.html">first item</a></li>
+<li class="item-0"><a href="link5.html">fifth item</a>
+</li>
+```
+
+若用`//li[@class="item-0"]/text()`进行提取，会得到以下的结果：
+
+```
+['\n	`]
+```
+
+这是因为`//li[@class="item-0"]/`定位的位置为：
+
+```
+				->|									 |<-
+<li class="item-0"><a href="link1.html">first item</a></li>
+				->|
+<li class="item-0"><a href="link5.html">fifth item</a>
+|<-
+</li>
+```
+
+而选取的区间内若出现其他节点，则会忽略这些节点，则在第一个li节点，选取的文本的范围为a节点尾标签到li节点尾标签之间的文本——无文本，则没有返回结果；第二个li节点，有换行符与下一行的多个缩进符
+
+因此，如果想要获取li节点内部的文本，有两种方式
+
+> 一种是选选取a节点再获取文本
+> 
+> ```
+> //li[@class="item-0"]/a/text()
+> ```
+> 
+> 另一种是使用`//`
+> 
+> ```
+> //li[@class="item-0"]//text()
+> ```
+
+7、属性匹配
+
+- 属性多值匹配
+
+	用class属性匹配li节点，获得其下的a节点的文本
+	
+	```
+	<li class="li li-first"><a href="link.html">first item</a></li>
+	```
+	
+	如果使用`//li[@class="li"`，会无法匹配，这时需要用contain( )函数
+	
+	```
+	html.xpath('//li[contains(@class, "li")]/a/text()')
+	```
+
+- 多属性匹配
+
+	根据多个属性确定一个节点，需要匹配多个属性，将多个属性匹配用and连接
+	
+	例如，用class属性和name属性选择 li 节点
+	
+	```
+	<li class="li li-first" name="item"><a href="link.html">first item</a></li>
+	```
+	
+	XPath表达式
+	
+	```
+	html.xpath('//li[contains(@class, "li") and @name="item"]/a/text()')
+	```
+
+8、按顺序选择
+
+```
+text = '''
+<div>
+    <ul>
+         <li class="item-0"><a href="link1.html">first item</a></li>
+         <li class="item-1"><a href="link2.html">second item</a></li>
+         <li class="item-inactive"><a href="link3.html">third item</a></li>
+         <li class="item-1"><a href="link4.html">fourth item</a></li>
+         <li class="item-0"><a href="link5.html">fifth item</a>
+     </ul>
+ </div>
+'''
+html = etree.HTML(text)
+
+result = html.xpath('//li[1]/a/text()') # 选择第一个li节点
+
+result = html.xpath('//li[last()]/a/text()') # 选择最后一个li节点
+
+result = html.xpath('//li[position()<3]/a/text()') # 选择前2个li节点
+
+result = html.xpath('//li[last()-2]/a/text()') # 选择倒数第3个li节点
+```
+
+9、节点轴选择
+
+```
+text = '''
+<div>
+    <ul>
+         <li class="item-0"><a href="link1.html"><span>first item</span></a></li>
+         <li class="item-1"><a href="link2.html">second item</a></li>
+         <li class="item-inactive"><a href="link3.html">third item</a></li>
+         <li class="item-1"><a href="link4.html">fourth item</a></li>
+         <li class="item-0"><a href="link5.html">fifth item</a>
+     </ul>
+ </div>
+'''
+html = etree.HTML(text)
+
+result = html.xpath('//li[1]/ancestor::*') # 选择第1个li节点的所有祖先节点
+
+result = html.xpath('//li[1]/ancestor::div') #  选择第1个li节点的祖先节点中的div节点
+
+result = html.xpath('//li[1]/attribute::*') # 选择第1个li节点的所有属性值
+
+result = html.xpath('//li[1]/child::a[@href="link1.html"]') # 选择第1个li节点的子节点中的a节点，且该节点的href属性值为link1.html
+
+result = html.xpath('//li[1]/descendant::span') # 选择第1个li节点的子孙节点中的span节点
+
+result = html.xpath('//li[1]/following::*[2]') # 选择第1个li节点之后的第二个节点，li节点本身为第一个节点
+
+result = html.xpath('//li[1]/following-sibling::*') # 选择第1个li节点后的所有同级节点
+```
 
 
 参考资料：
