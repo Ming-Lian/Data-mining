@@ -1698,6 +1698,27 @@ soup.nodename.string
 find_all(name,attrs,recursive,text)
 ```
 
+> - name 按照节点名来查询，例如：`name="ul"`
+> 
+> - attrs 按照属性来查找，例如：`attrs={'id':'list-1'}`
+> 
+> - text 用来匹配节点的文件，可以是字符串也可以是正则表达式对象，例如：`attrs='abc'`或`attrs=re.compile('.*?')`
+
+- **find ( )**
+
+find( )方法返回第一个匹配的元素
+
+还有许多其他的查询方法，其用法与前面提到的find_all( )、find( )方法完全相同，只不过查询范围不同
+
+> find_parents( )和find_parent( )
+> 
+> find_next_siblings( )和find_next_sibling( )
+> 
+> find_previous_siblings( )和find_previous_sibling( )
+> 
+> find_all_next( )和find_next( )
+> 
+> find_all_previous( )和find_previous( )
 
 
 
