@@ -32,7 +32,9 @@
 	- [2.4. 实战：爬取猫眼电影排行](#inaction-maoyan-top100)
 - [3. 解析库的使用](#usage-of-resolver-library)
 	- [3.1. 使用XPath](#use-xpath)
-
+	- [3.2. 使用Beautiful Soup](#use-beautifulsoup)
+		- [3.2.1. 节点选择器](#use-beautifulsoup-node-selecter)
+		- [3.2.2. 方法选择器](#use-beautifulsoup-find-selecter)
 
 
 <h1 name="title">python3爬虫笔记</h1>
@@ -1532,6 +1534,172 @@ result = html.xpath('//li[1]/following::*[2]') # 选择第1个li节点之后的�
 
 result = html.xpath('//li[1]/following-sibling::*') # 选择第1个li节点后的所有同级节点
 ```
+
+<a name="use-beautifulsoup"><h3>3.2. 使用Beautiful Soup [<sup>目录</sup>](#content)</h3></a>
+
+Beautiful Soup支持的解析器：
+
+| 解析器 | 使用方法 |
+|:---|:---|
+| Python标准库 | BeautifulSoup(markup, 'html.parser') |
+| lxml HTML解析器 | BeautifulSoup(markup, 'lxml') |
+| lxml XML解析器 | BeautifulSoup(markup, 'xml') |
+| html5lib | BeautifulSoup(markup,'html5lib') |
+
+基本用法：
+
+```
+from bs4 import BeautifulSoup
+
+# 声明一个HTML字符串，注意它并不是一个完整的HTML，因为body和html节点没有闭合
+html = '''
+<html><head><title>The Dormouse's story</title></head>
+<body>
+<p class="title" name="dromouse"><b>The Dormouse's story</b></p>
+<p class="story">Once upon a time there were three little sisters; and their names were
+<a href="http://example.com/elsie" class="sister" id="link1"><!-- Elsie --></a>,
+<a href="http://example.com/lacie" class="sister" id="link2">Lacie</a> and
+<a href="http://example.com/tillie" class="sister" id="link3">Tillie</a>;
+and they lived at the bottom of a well.</p>
+<p class="story">...</p>
+'''
+
+soup = BeautifulSoup(html, 'lxml')	# 初始化BeautifulSoup对象，同时会更正格式
+print(soup.prettify())	# 把要解析的字符串以标准的缩进格式输出
+print(soup.title.string)	# 选择title节点，并获取其文本内容
+```
+
+<a name="use-beautifulsoup-node-selecter"><h4>3.2.1. 节点选择器 [<sup>目录</sup>](#content)</h4></a>
+
+1、选择元素
+
+在BeautifulSoup对象后用 "." 直接连接节点名即可
+
+```
+soup.nodename
+```
+
+- 嵌套选择
+
+	在选择了某个节点后，还想基于该节点往下继续选择其子节点或子孙节点，则可以进行嵌套选择
+	
+	```
+	html = """
+	<html><head><title>The Dormouse's story</title></head>
+	<body>
+	"""
+	```
+	
+	基于head节点获取title节点：`soup.head.title`
+
+- 关联选择
+
+	在做选择的时候，有时候不能做到一步就选到想要的节点元素，需要先选中某一个节点元素，然后以它为基准再选择它的子节点、父节点、兄弟节点
+	
+	（1）子节点和子孙节点
+	
+	获取**直接子节点**可以调用**contents属性**
+	
+	```
+	html = """
+	<html>
+	    <head>
+	        <title>The Dormouse's story</title>
+	    </head>
+	    <body>
+	        <p class="story">
+	            Once upon a time there were three little sisters; and their names were
+	            <a href="http://example.com/elsie" class="sister" id="link1">
+	                <span>Elsie</span>
+	            </a>
+	            <a href="http://example.com/lacie" class="sister" id="link2">Lacie</a>
+	            and
+	            <a href="http://example.com/tillie" class="sister" id="link3">Tillie</a>
+	            and they lived at the bottom of a well.
+	        </p>
+	        <p class="story">...</p>
+	"""
+	```
+	
+	获取p节点的所有直接子节点
+	
+	```
+	soup.p.contents
+	
+	['\n            Once upon a time there were three little sisters; and their names were\n            ', <a class="sister" href="http://example.com/elsie" id="link1">
+	<span>Elsie</span>
+	</a>, '\n', <a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>, '\n            and\n            ', <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>, '\n            and they lived at the bottom of a well.\n        ']
+	```
+	
+	可以看到返回的结果是列表形式
+	
+	也可以用**children属性**得到响应的结果
+	
+	```
+	for i, child in enumerate(soup.p.children):
+	    print(i, child)
+	```
+
+	如果想要得到所有的子孙节点，可以调用descendants属性
+
+	```
+	for i, child in enumerate(soup.p.descendants):
+	    print(i, child)
+	```
+
+	（2）父节点和祖先节点
+
+	parent属性：获取某个节点的父节点
+
+	```
+	soup.a.parent
+	```
+	
+	parents属性：获取所有祖先节点
+	
+	```
+	soup.a.parents
+	```
+
+	（3）兄弟节点
+	
+	获取同级的节点
+	
+	> - next_sibling：下一个兄弟节点
+	
+	> - previous_sibling：上一个兄弟节点
+	> 
+	> - next_siblings：后面的所有兄弟节点
+	> 
+	> - previous_siblings：前面的所有兄弟节点
+
+
+2、提取信息
+
+选择好节点后，需要获得该节点的信息
+
+```
+soup.nodename.atrrs['attr1']
+```
+
+3、获取文本内容
+
+```
+soup.nodename.string
+```
+
+<a name="use-beautifulsoup-find-selecter"><h4>3.2.2. 方法选择器 [<sup>目录</sup>](#content)</h4></a>
+
+- **find_all ( )**
+
+查询所有符合条件的元素
+
+```
+find_all(name,attrs,recursive,text)
+```
+
+
+
 
 
 参考资料：
