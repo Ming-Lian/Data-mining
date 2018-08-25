@@ -40,6 +40,9 @@
 		- [3.3.2. 基本CSS选择器](#use-pyquery-css-selecter)
 		- [3.3.3. 查找节点](#use-pyquery-search-node)
 		- [3.3.4. 获取信息](#use-pyquery-get-information)
+- [4. 文件存储](#file-storage)
+	- [4.1. JSON](#file-storage-json) 
+	- [4.2. CSV](#file-storage-csv)
 
 
 <h1 name="title">python3爬虫笔记</h1>
@@ -1897,6 +1900,111 @@ for item in a.items():
 text( )方法：获取内部的文本
 
 html( )方法：获取内部的HTML文本
+
+<a name="file-storage"><h2>4. 文件存储 [<sup>目录</sup>](#content)</h2></a>
+
+<a name="file-storage-json"><h3>4.1. JSON [<sup>目录</sup>](#content)</h3></a>
+
+一个JSON对象：
+
+```
+[{
+	"name" : "Bob",
+	"gender" : "male",
+	"birthday" : "1992-10-18"
+},{
+	"name" : "Selina",
+	"gender" : "female",
+	"birthday" : "1995-10-18"
+}]
+```
+
+注意：**JSON数据需要用双引号包围**
+
+- **读取JSON数据**
+
+```
+import json
+
+str = '''
+[{
+	"name" : "Bob",
+	"gender" : "male",
+	"birthday" : "1992-10-18"
+},{
+	"name" : "Selina",
+	"gender" : "female",
+	"birthday" : "1995-10-18"
+}]
+'''
+
+data = json.loads(str)	# 使用loads( )方法，将JSON文本字符串转为JSON对象
+```
+
+JSON对象其实可以看作是一个列表，要获取JSON对象中的内容，使用列表的索引即可
+
+```
+# 以下两种方法均可以获得键值
+data[0]['name']
+data[0].get('name')	# 推荐该方法，这样如果键名不存在，也不会报错，而是会返回None，也可以传入第二个参数，作为键名不存在时返回的默认值
+```
+
+- **输出JSON**
+
+可以调用 dump( )方法，将JSON对象转化为字符串
+
+```
+json.dump(data)
+```
+
+如果想保存JSON格式，可以再加一个参数indent，代表缩进字符个数
+
+```
+json.dump(data, indent=2)
+
+```
+
+如果JSON中包含中文字符，还需要指定参数 ensure_ascii 为 False，另外还要规定文本输出的编码：
+
+```
+with open('data.json', 'w', encoding='utf-8') as f:
+	file.write(json.dump(data, indent=2, ensure_ascii=False))
+```
+
+<a name="file-storage-csv"><h3>4.2. CSV [<sup>目录</sup>](#content)</h3></a>
+
+- **写入**
+
+```
+import csv
+
+with open('data.csv', 'w', encoding='utf-8') as f:
+	writer = csv.writer(f)	# 初始化写入对象
+	writer.writerow(['id','name','age'])
+	writer.writerow(['10001','MIke',20])
+	...
+```
+
+默认以逗号分隔，可以指定分隔符，需要传入 delimiter 参数
+
+```
+writer = csv.writer(f,delimiter=" ")	# 初始化写入对象，以空格作为分隔符
+```
+
+一般情况下，爬虫抓取的都是结构化数据，一般会用字典表示，在csv库中也提供了字典的写入方式：
+
+```
+import csv
+
+with open('data.csv', 'w', encoding='utf-8') as f:
+	fieldnames = ['id','name','age']
+	writer = csv.DicWriter(f,fieldnames=fieldnames)
+	writer.writeheader()
+	writer.writerow({'id':'10001','name':'Bob','age':'20})
+	...
+```
+
+
 
 
 
