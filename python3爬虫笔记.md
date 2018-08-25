@@ -35,6 +35,11 @@
 	- [3.2. 使用Beautiful Soup](#use-beautifulsoup)
 		- [3.2.1. 节点选择器](#use-beautifulsoup-node-selecter)
 		- [3.2.2. 方法选择器](#use-beautifulsoup-find-selecter)
+	- [3.3. 使用pyquery](#use-pyquery)
+		- [3.3.1. 初始化](#use-pyquery-initial)
+		- [3.3.2. 基本CSS选择器](#use-pyquery-css-selecter)
+		- [3.3.3. 查找节点](#use-pyquery-search-node)
+		- [3.3.4. 获取信息](#use-pyquery-get-information)
 
 
 <h1 name="title">python3爬虫笔记</h1>
@@ -1720,6 +1725,178 @@ find( )方法返回第一个匹配的元素
 > 
 > find_all_previous( )和find_previous( )
 
+<a name="use-pyquery"><h3>3.3. 使用pyquery [<sup>目录</sup>](#content)</h3></a>
+
+如果你比较喜欢用CSS选择器，如果你对jQuery有所了解，那么有一个更适合你的解析库 —— **pyquery**
+
+<a name="use-pyquery-initial"><h4>3.3.1. 初始化 [<sup>目录</sup>](#content)</h4></a>
+
+1、字符串初始化
+	
+```
+from pyquery import PyQuery as pq
+
+doc=pq(html)
+```
+
+2、URL初始化
+
+```
+from pyquery import PyQuery as pq
+
+doc=pq(url='https://www.baidu.com')
+```
+
+与下面的功能相同：
+
+```
+from pyquery import PyQuery as pq
+import requests
+
+doc=pq(requests.get('https://www.baidu.com').text)
+```
+
+3、文件初始化
+
+```
+from pyquery import PyQuery as pq
+
+doc=pq(filename='demo.html')
+	```
+
+<a name="use-pyquery-css-selecter"><h4>3.3.2. 基本CSS选择器 [<sup>目录</sup>](#content)</h4></a>
+
+```
+html = '''
+<div id="container">
+    <ul class="list">
+         <li class="item-0">first item</li>
+         <li class="item-1"><a href="link2.html">second item</a></li>
+         <li class="item-0 active"><a href="link3.html"><span class="bold">third item</span></a></li>
+         <li class="item-1 active"><a href="link4.html">fourth item</a></li>
+         <li class="item-0"><a href="link5.html">fifth item</a></li>
+     </ul>
+ </div>
+'''
+from pyquery import PyQuery as pq
+doc = pq(html)
+print(doc('#container .list li'))	# 选择id为container的节点，然后再选择其内部的class为list的内部节点的所有li节点
+print(type(doc('#container .list li')))
+```
+
+<a name="use-pyquery-search-node"><h4>3.3.3. 查找节点 [<sup>目录</sup>](#content)</h4></a>
+
+1、子节点
+
+查找子节点需要用到find( )方法，此时传入的参数是CSS选择器
+
+```
+from pyquery import PyQuery as pq
+doc = pq(html)
+items = doc('.list') # 使用CSS选择器，选取class为list的节点
+print(type(items))
+print(items)
+lis = items.find('li') # 在所有子孙节点中寻找li节点
+print(type(lis))
+print(lis)
+```
+
+find( )的查找范围为节点的所有子孙节点
+
+如果我们只想找子节点，需要使用children( )方法
+
+```
+lis = items.children('.active') # 筛选子节点中class为active的节点
+```
+
+2、父节点
+
+parent( ) 方法：获取某个节点的父节点
+
+```
+items.parent()
+```
+
+parents( ) 方法：获取所有祖先节点
+
+```
+items.parents()
+```
+
+3、兄弟节点
+
+siblings( )方法：获取兄弟节点
+
+```
+items.siblings()
+```
+
+4、遍历
+
+pyquery的选择结果可能是多个节点，对于多个节点的结果，我们需要遍历来获取。需要用到items( )方法：
+
+```
+from pyquery import PyQuery as pq
+doc = pq(html)
+lis = doc('li').items()	# 调用items( )方法后，会得到一个生成器，遍历一下就可以逐个得到li节点对象
+print(type(lis))
+for li in lis:
+    print(li, type(li))
+```
+
+<a name="use-pyquery-get-information"><h4>3.3.4. 获取信息 [<sup>目录</sup>](#content)</h4></a>
+
+1、获取属性
+
+调用attr( ) 方法
+
+```
+a.attr('href')
+```
+
+当选中多个元素，然后调用attr( )方法，只会返回第一个元素的属性，如下：
+
+```
+html = '''
+<div class="wrap">
+    <div id="container">
+        <ul class="list">
+             <li class="item-0">first item</li>
+             <li class="item-1"><a href="link2.html">second item</a></li>
+             <li class="item-0 active"><a href="link3.html"><span class="bold">third item</span></a></li>
+             <li class="item-1 active"><a href="link4.html">fourth item</a></li>
+             <li class="item-0"><a href="link5.html">fifth item</a></li>
+         </ul>
+     </div>
+ </div>
+'''
+from pyquery import PyQuery as pq
+doc = pq(html)
+a = doc('a')
+print(a, type(a))
+print(a.attr('href'))
+
+
+<a href="link2.html">second item</a><a href="link3.html"><span class="bold">third item</span></a><a href="link4.html">fourth item</a><a href="link5.html">fifth item</a> <class 'pyquery.pyquery.PyQuery'>
+
+link2.html
+```
+
+这时，如果想要获取所有a节点的属性，需要用到前面提到的遍历：
+
+```
+from pyquery import PyQuery as pq
+doc = pq(html)
+a = doc('a')
+for item in a.items():
+	print(item.attr('href'))
+```
+
+2、获取文本
+
+text( )方法：获取内部的文本
+
+html( )方法：获取内部的HTML文本
 
 
 
